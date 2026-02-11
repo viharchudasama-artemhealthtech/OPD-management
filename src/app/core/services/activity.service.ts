@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { DataSyncService } from './data-sync.service';
 
 export interface Activity {
   id: string;
@@ -20,21 +21,16 @@ export class ActivityService {
   private readonly STORAGE_KEY = 'system_activities';
   private readonly MAX_ACTIVITIES = 20;
 
-  constructor() {
-    const saved = localStorage.getItem(this.STORAGE_KEY);
-    let initial: Activity[];
+  constructor(private readonly dataSync: DataSyncService) {
+    const saved = this.dataSync.getItem<Activity[]>(this.STORAGE_KEY, []);
 
-    try {
-      initial = saved
-        ? JSON.parse(saved).map((a: Activity) => ({
-          ...a,
-          time: new Date(a.time),
-        }))
-        : this.getInitialActivities();
-    } catch (error) {
-      console.error('Failed to parse activities from storage', error);
-      initial = this.getInitialActivities();
-    }
+    // Convert date strings back to Date objects
+    const initial = saved.length > 0
+      ? saved.map((a: Activity) => ({
+        ...a,
+        time: new Date(a.time),
+      }))
+      : this.getInitialActivities();
 
     this.activitiesSubject = new BehaviorSubject<Activity[]>(initial);
     this.activities$ = this.activitiesSubject.asObservable();
@@ -61,12 +57,8 @@ export class ActivityService {
   }
 
   private saveActivities(activities: Activity[]): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(activities));
-      this.activitiesSubject.next(activities);
-    } catch (error) {
-      console.error('Failed to save activities to storage', error);
-    }
+    this.dataSync.setItem(this.STORAGE_KEY, activities);
+    this.activitiesSubject.next(activities);
   }
 
   private getInitialActivities(): Activity[] {

@@ -17,11 +17,6 @@ export interface User extends BaseEntity {
   readonly department?: Department;
 }
 
-export interface AuthResponse {
-  readonly user: User;
-  readonly token: string;
-}
-
 export interface AppUser extends User {
   readonly email: string;
   readonly status: UserStatus;

@@ -6,10 +6,12 @@ import { UserRole } from '../models/enums/user-role.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
 import { UserService } from './user.service';
 import { ActivityService } from './activity.service';
+import { AuthRepository } from '../repositories/auth.repository';
 
 @Injectable({
     providedIn: 'root',
 })
+
 export class AuthService {
 
     private readonly currentUserSubject: BehaviorSubject<User | null>;
@@ -18,19 +20,11 @@ export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly activityService: ActivityService,
+        private readonly authRepository: AuthRepository,
     ) {
-        const savedUser = localStorage.getItem('currentUser');
-        this.currentUserSubject = new BehaviorSubject<User | null>(savedUser ? this.safeParse(savedUser) : null);
+        const savedUser = this.authRepository.getCurrentUser();
+        this.currentUserSubject = new BehaviorSubject<User | null>(savedUser);
         this.currentUser$ = this.currentUserSubject.asObservable();
-    }
-
-    private safeParse(data: string): User | null {
-        try {
-            return JSON.parse(data);
-        } catch (error) {
-            console.error('Failed to parse user session', error);
-            return null;
-        }
     }
 
     public get currentUserValue(): User | null {
@@ -60,7 +54,7 @@ export class AuthService {
                 throw new Error('Invalid credentials or account inactive');
             }),
             tap(user => {
-                localStorage.setItem('currentUser', JSON.stringify(user));
+                this.authRepository.saveCurrentUser(user);
                 this.currentUserSubject.next(user);
                 this.activityService.logActivity(
                     `Login successful: ${user.fullName}`,
@@ -73,7 +67,7 @@ export class AuthService {
     }
 
     public logout(): void {
-        localStorage.removeItem('currentUser');
+        this.authRepository.clearSession();
         this.currentUserSubject.next(null);
         this.activityService.logActivity('Logout successful', 'pi pi-sign-out', 'text-gray-500', 'info');
     }

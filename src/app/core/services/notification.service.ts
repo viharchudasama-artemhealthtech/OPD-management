@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DataSyncService } from './data-sync.service';
 
 export interface Notification {
   id: string;
@@ -17,6 +18,7 @@ export interface Notification {
   providedIn: 'root',
 })
 export class NotificationService {
+  private readonly STORAGE_KEY = 'app_notifications';
   private readonly notificationsSubject = new BehaviorSubject<Notification[]>([]);
   public readonly notifications$ = this.notificationsSubject.asObservable();
 
@@ -24,16 +26,15 @@ export class NotificationService {
     map(notifications => notifications.filter(n => !n.read).length)
   );
 
-  constructor(private readonly messageService: MessageService) {
-    // Load existing notifications from localStorage if any
-    const saved = localStorage.getItem('app_notifications');
-    if (saved) {
-      try {
-        this.notificationsSubject.next(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse saved notifications', e);
-      }
-    }
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly dataSync: DataSyncService
+  ) {
+    // Load existing notifications from storage
+    const saved = this.dataSync.getItem<Notification[]>(this.STORAGE_KEY, []);
+    // Convert timestamp strings back to Date objects
+    const notifications = saved.map(n => ({ ...n, timestamp: new Date(n.timestamp) }));
+    this.notificationsSubject.next(notifications);
   }
 
   public showSuccess(summary: string, detail: string): void {
@@ -95,6 +96,6 @@ export class NotificationService {
   }
 
   private saveToStorage(notifications: Notification[]): void {
-    localStorage.setItem('app_notifications', JSON.stringify(notifications));
+    this.dataSync.setItem(this.STORAGE_KEY, notifications);
   }
 }

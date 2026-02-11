@@ -38,12 +38,7 @@ export class DataSyncService implements OnDestroy {
     return this.storageUpdateSource$.pipe(filter((updatedKey: string) => updatedKey === key));
   }
 
-  /**
-   * Alias for onKeyUpdate to maintain backward compatibility
-   */
-  public getStorageUpdates(key: string): Observable<string> {
-    return this.onKeyUpdate(key);
-  }
+
 
   /**
    * Helper to get data from localStorage with type safety and error handling
