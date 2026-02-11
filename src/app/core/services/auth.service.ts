@@ -77,7 +77,4 @@ export class AuthService {
         return !!user && roles.includes(user.role);
     }
 
-    public getDoctors(): Observable<User[]> {
-        return this.userService.getDoctors().pipe(map(doctors => doctors.map(({ password, ...d }) => d)));
-    }
 }

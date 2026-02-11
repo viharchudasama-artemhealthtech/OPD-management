@@ -23,7 +23,7 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { PatientService } from '../../../../core/services/patient.service';
 import { OpdService } from '../../../../core/services/opd.service';
-import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
 import { LoggerService } from '../../../../core/services/logger.service';
 
@@ -95,7 +95,7 @@ export class OpdCheckinComponent implements OnInit {
   constructor(
     private readonly patientService: PatientService,
     private readonly opdService: OpdService,
-    private readonly authService: AuthService,
+    private readonly userService: UserService,
     private readonly appointmentService: AppointmentService,
     private readonly fb: FormBuilder,
     private readonly messageService: MessageService,
@@ -147,7 +147,7 @@ export class OpdCheckinComponent implements OnInit {
   }
 
   private loadDoctors(): void {
-    this.authService
+    this.userService
       .getDoctors()
       .pipe(take(1))
       .subscribe((doctors: User[]) => {

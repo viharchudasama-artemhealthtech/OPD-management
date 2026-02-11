@@ -13,6 +13,7 @@ import { DataSyncService } from '../services/data-sync.service';
     providedIn: 'root',
 })
 export class AuthRepository {
+
     private readonly STORAGE_KEY_USER = 'currentUser';
     private readonly STORAGE_KEY_TOKEN = 'authToken';
 

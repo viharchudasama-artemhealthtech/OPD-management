@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { UserRole } from '../models/enums/user-role.enum';
 import { UserStatus } from '../models/enums/user-status.enum';
-import { AppUser } from '../models/user.model';
+import { AppUser, User } from '../models/user.model';
 import { ActivityService } from './activity.service';
 import { DataSyncService } from './data-sync.service';
 import { UserRepository } from '../repositories/user.repository';
@@ -52,8 +52,14 @@ export class UserService implements OnDestroy {
     return this.users$;
   }
 
-  public getDoctors(): Observable<AppUser[]> {
-    return this.users$.pipe(map(users => users.filter(u => u.role === UserRole.DOCTOR && u.status === UserStatus.ACTIVE)));
+  public getDoctors(): Observable<User[]> {
+    return this.users$.pipe(
+      map(users =>
+        users
+          .filter(u => u.role === UserRole.DOCTOR && u.status === UserStatus.ACTIVE)
+          .map(({ password, ...user }) => user as User),
+      ),
+    );
   }
 
   public addUser(user: Partial<AppUser>): Observable<AppUser> {

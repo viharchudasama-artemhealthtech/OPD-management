@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
 import { PatientService } from '../../../../core/services/patient.service';
 import { Observable, of } from 'rxjs';
 import { map, take, switchMap } from 'rxjs/operators';
@@ -69,6 +70,7 @@ export class BookAppointmentComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly appointmentService: AppointmentService,
     private readonly authService: AuthService,
+    private readonly userService: UserService,
     private readonly patientService: PatientService,
     private readonly messageService: MessageService,
     private readonly router: Router,
@@ -107,7 +109,7 @@ export class BookAppointmentComponent implements OnInit {
   }
 
   private loadDoctors(): void {
-    this.authService.getDoctors().subscribe((doctors: User[]) => {
+    this.userService.getDoctors().subscribe((doctors: User[]) => {
       this.doctors = doctors.map((d: User) => ({
         id: d.id,
         fullName: d.fullName,

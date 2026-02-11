@@ -11,7 +11,7 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AppointmentService } from '../../../../core/services/appointment.service';
-import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
 import { PatientService } from '../../../../core/services/patient.service';
 import { Observable, tap } from 'rxjs';
 import { Department } from '../../../../core/models/enums/department.enum';
@@ -82,7 +82,7 @@ export class AppointmentSchedulingComponent implements OnInit {
   constructor(
     private readonly appointmentService: AppointmentService,
     private readonly patientService: PatientService,
-    private readonly authService: AuthService,
+    private readonly userService: UserService,
     private readonly messageService: MessageService,
     private readonly cdr: ChangeDetectorRef,
   ) {
@@ -94,7 +94,7 @@ export class AppointmentSchedulingComponent implements OnInit {
   }
 
   private loadDoctors(): void {
-    this.authService
+    this.userService
       .getDoctors()
       .pipe(
         tap((doctors: User[]) => {
