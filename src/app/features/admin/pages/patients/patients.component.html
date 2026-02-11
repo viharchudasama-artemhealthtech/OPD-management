@@ -1,0 +1,159 @@
+<div class="p-4">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="text-3xl font-bold text-900 m-0">All Patients</h1>
+      <p class="text-500 m-0">Manage and monitor all patients in the system.</p>
+    </div>
+    <div class="flex gap-2">
+      <button pButton label="Export" icon="pi pi-download" class="p-button-secondary" (click)="exportCSV()"></button>
+      <button pButton label="Add Patient" icon="pi pi-plus" class="p-button-primary"></button>
+    </div>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="mb-4">
+    <p-card>
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Search by name, phone, or ID..." [(ngModel)]="searchValue"
+              class="w-full" />
+          </span>
+        </div>
+        <div class="col-12 md:col-6">
+          <p-dropdown [options]="[
+              { label: 'All Patients', value: null },
+              { label: 'Active', value: 'active' },
+              { label: 'Inactive', value: 'inactive' },
+            ]" placeholder="Select Status" class="w-full"></p-dropdown>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Patients Table -->
+  <p-card>
+    <p-table #dt [value]="patients" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th colspan="8">
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal(searchValue, 'contains')"
+                placeholder="Search patients..." class="w-full" />
+            </span>
+          </th>
+        </tr>
+        <tr>
+          <th pSortableColumn="id">Patient ID <p-sortIcon field="id"></p-sortIcon></th>
+          <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+          <th pSortableColumn="dob">DOB <p-sortIcon field="dob"></p-sortIcon></th>
+          <th pSortableColumn="contact">Contact <p-sortIcon field="contact"></p-sortIcon></th>
+          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+          <th pSortableColumn="gender">Gender <p-sortIcon field="gender"></p-sortIcon></th>
+          <th pSortableColumn="bloodGroup">Blood Group <p-sortIcon field="bloodGroup"></p-sortIcon></th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-patient>
+        <tr>
+          <td>
+            <span class="font-mono font-bold">{{ patient.id }}</span>
+          </td>
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.dob | date: 'short' }} ({{ patient.dob | age }})</td>
+          <td>{{ patient.contact | phone }}</td>
+          <td>{{ patient.email || '-' }}</td>
+          <td><i [class]="patient.gender | genderIcon"></i> {{ patient.gender || '-' }}</td>
+          <td>
+            <p-tag [value]="patient.bloodGroup || 'N/A'" severity="info"></p-tag>
+          </td>
+          <td>
+            <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm mr-2"
+              (click)="viewPatient(patient)" title="View"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm"
+              (click)="deletePatient(patient)" title="Delete"></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center p-4">
+            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
+            <p class="text-500">No patients found.</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Patient Detail Dialog -->
+  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{ width: '50vw' }" header="Patient Details"
+    [maximizable]="true" (onHide)="closeDialog()">
+    <div *ngIf="selectedPatient" class="grid">
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Patient ID</label>
+          <span class="text-900 font-medium">{{ selectedPatient.id }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Full Name</label>
+          <span class="text-900 font-medium">{{ selectedPatient.fullName }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Phone</label>
+          <span class="text-900 font-medium">{{ selectedPatient.phone | phone }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Email</label>
+          <span class="text-900 font-medium">{{ selectedPatient.email || 'N/A' }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Gender</label>
+          <span class="text-900 font-medium"><i [class]="selectedPatient.gender | genderIcon"></i> {{
+            selectedPatient.gender || 'N/A' }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Age</label>
+          <span class="text-900 font-medium">{{ selectedPatient.age | age }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Blood Group</label>
+          <span class="text-900 font-medium">{{ selectedPatient.bloodGroup || 'N/A' }}</span>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Registered At</label>
+          <span class="text-900 font-medium">{{ selectedPatient.createdAt | date: 'medium' }}</span>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Address</label>
+          <span class="text-900 font-medium">{{ selectedPatient.address || 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>

@@ -1,0 +1,138 @@
+<p-toast></p-toast>
+
+<div class="p-3">
+  <div class="mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">My Appointments</h1>
+    <p class="text-500 m-0">View and check in your scheduled appointments</p>
+  </div>
+
+  <p-card>
+    <p-table
+      [value]="(myAppointments$ | async) || []"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 20, 30]"
+      styleClass="p-datatable-sm"
+      [rowHover]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Appointment Code</th>
+          <th>Patient</th>
+          <th>Date</th>
+          <th>Time Slot</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-appointment>
+        <tr [class.bg-blue-50]="isFutureAppointment(appointment)">
+          <td>
+            <span class="font-mono font-bold text-primary">{{ appointment.id }}</span>
+          </td>
+          <td>
+            <div class="font-semibold">{{ appointment.patientName }}</div>
+          </td>
+          <td>{{ appointment.appointmentDate | date: 'mediumDate' }}</td>
+          <td>
+            <i class="pi pi-clock mr-1"></i>
+            {{ appointment.timeSlot }}
+          </td>
+          <td>{{ appointment.reason }}</td>
+          <td>
+            <p-tag [value]="appointment.status" [severity]="getStatusSeverity(appointment.status)"> </p-tag>
+          </td>
+          <td>
+            @if (canCheckIn(appointment)) {
+              <button
+                pButton
+                label="Check In to Queue"
+                icon="pi pi-sign-in"
+                class="p-button-sm p-button-success"
+                [loading]="isCheckingIn[appointment.id]"
+                (click)="checkInAppointment(appointment)"
+              ></button>
+            }
+            @if (appointment.status === 'CHECKED_IN') {
+              <span class="text-green-600 font-semibold">
+                <i class="pi pi-check-circle mr-1"></i>
+                In Queue
+              </span>
+            }
+            @if (appointment.status === 'COMPLETED') {
+              <span class="text-500">
+                <i class="pi pi-check mr-1"></i>
+                Completed
+              </span>
+            }
+            @if (isFutureAppointment(appointment) && appointment.status === 'SCHEDULED') {
+              <span class="text-blue-600">
+                <i class="pi pi-calendar mr-1"></i>
+                Upcoming
+              </span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <i class="pi pi-calendar text-4xl text-400 mb-3 block"></i>
+            <p class="text-500">No appointments scheduled</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Instructions Card -->
+  <p-card header="How to Use" styleClass="mt-3">
+    <div class="grid">
+      <div class="col-12 md:col-6">
+        <h4 class="text-primary mt-0">
+          <i class="pi pi-info-circle mr-2"></i>
+          Check-in Process
+        </h4>
+        <ul class="list-none p-0 m-0">
+          <li class="mb-2">
+            <i class="pi pi-check text-green-500 mr-2"></i>
+            View all your scheduled appointments
+          </li>
+          <li class="mb-2">
+            <i class="pi pi-check text-green-500 mr-2"></i>
+            Click "Check In to Queue" when patient arrives
+          </li>
+          <li class="mb-2">
+            <i class="pi pi-check text-green-500 mr-2"></i>
+            Patient gets HIGH priority in your queue
+          </li>
+          <li class="mb-2">
+            <i class="pi pi-check text-green-500 mr-2"></i>
+            Go to "My Queue" to start consultation
+          </li>
+        </ul>
+      </div>
+      <div class="col-12 md:col-6">
+        <h4 class="text-primary mt-0">
+          <i class="pi pi-star-fill mr-2"></i>
+          Priority System
+        </h4>
+        <ul class="list-none p-0 m-0">
+          <li class="mb-2">
+            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 border-round font-semibold mr-2">HIGH</span>
+            Checked-in appointments appear first
+          </li>
+          <li class="mb-2">
+            <span class="bg-blue-100 text-blue-800 px-2 py-1 border-round font-semibold mr-2">NORMAL</span>
+            Walk-in patients appear after appointments
+          </li>
+          <li class="mb-2">
+            <i class="pi pi-clock text-500 mr-2"></i>
+            Same priority sorted by arrival time
+          </li>
+        </ul>
+      </div>
+    </div>
+  </p-card>
+</div>

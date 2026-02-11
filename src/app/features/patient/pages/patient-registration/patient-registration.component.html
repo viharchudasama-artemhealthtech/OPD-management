@@ -1,0 +1,227 @@
+<div class="patient-registration-container fade-in">
+  <p-toast></p-toast>
+
+  <p-card header="New Patient Registration">
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="p-fluid" appAutoNext>
+      <!-- Personal Information Section -->
+      <div class="form-section shadow-sm">
+        <h3>Personal Information</h3>
+        <div class="grid">
+          <div class="col-12 md:col-6 lg:col-8 field pt-3">
+            <span class="p-float-label">
+              <i class="pi pi-user mr-2 text-primary"
+                style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 1"></i>
+              <input pInputText id="fullName" formControlName="fullName" style="padding-left: 35px" />
+              <label for="fullName" style="margin-left: 25px">Full Name *</label>
+            </span>
+            <small class="p-error"
+              *ngIf="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched">
+              Full name is required (min 3 characters).
+            </small>
+          </div>
+
+          <div class="col-12 md:col-6 lg:col-4 field pt-3">
+            <span class="p-float-label">
+              <p-calendar id="dob" formControlName="dob" [showIcon]="true" [maxDate]="maxDate"
+                appendTo="body"></p-calendar>
+              <label for="dob">Date of Birth</label>
+            </span>
+          </div>
+
+          <div class="col-12 md:col-4 lg:col-2 field pt-3">
+            <span class="p-float-label">
+              <p-inputNumber id="age" formControlName="age" [min]="0" [max]="120"></p-inputNumber>
+              <label for="age">Age *</label>
+            </span>
+          </div>
+
+          <div class="col-12 md:col-4 lg:col-3 field pt-3">
+            <span class="p-float-label">
+              <p-dropdown id="gender" formControlName="gender" [options]="genders" optionLabel="label"
+                optionValue="value" placeholder="Select Gender"></p-dropdown>
+              <label for="gender">Gender *</label>
+            </span>
+          </div>
+
+          <div class="col-12 md:col-4 lg:col-3 field pt-3">
+            <span class="p-float-label">
+              <input pInputText id="phone" formControlName="phone" pKeyFilter="num" maxlength="10" />
+              <label for="phone">Phone Number *</label>
+            </span>
+            <small class="p-error"
+              *ngIf="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched">
+              Valid 10-digit phone number is required.
+            </small>
+            <small class="p-warning" *ngIf="isDuplicate"> This phone number is already registered. </small>
+          </div>
+
+          <div class="col-12 lg:col-4 field pt-3">
+            <span class="p-float-label">
+              <input pInputText id="email" formControlName="email" />
+              <label for="email">Email</label>
+            </span>
+            <small class="p-error"
+              *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched && registrationForm.get('email')?.errors?.['pattern']">
+              Invalid email format (e.g., user&#64;example.com).
+            </small>
+          </div>
+
+
+          <div class="col-12 md:col-6 field pt-3">
+            <span class="p-float-label">
+              <input pInputText id="occupation" formControlName="occupation" />
+              <label for="occupation">Occupation</label>
+            </span>
+          </div>
+
+          <div class="col-12 field pt-3">
+            <span class="p-float-label">
+              <textarea pInputTextarea id="address" formControlName="address" rows="2" autoResize="true"></textarea>
+              <label for="address">Residential Address *</label>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Information Section -->
+      <div class="form-section shadow-sm">
+        <h3>Medical Details</h3>
+        <div class="grid">
+          <div class="col-12 md:col-4 field pt-3">
+            <span class="p-float-label">
+              <p-dropdown id="bloodGroup" formControlName="bloodGroup" [options]="bloodGroups" optionLabel="label"
+                optionValue="value" placeholder="Select Blood Group"></p-dropdown>
+              <label for="bloodGroup">Blood Group</label>
+            </span>
+          </div>
+
+          <div class="col-12 md:col-8 field pt-3">
+            <span class="p-float-label">
+              <p-chips id="allergies" formControlName="allergies" placeholder="Type and press Enter"></p-chips>
+              <label for="allergies">Allergies</label>
+            </span>
+          </div>
+        </div>
+
+        <!-- Medical History -->
+        <div class="mt-4">
+          <div class="flex justify-content-between align-items-center mb-3">
+            <h4 class="m-0 text-700 font-semibold"><i class="pi pi-history mr-2"></i>Medical History</h4>
+            <button type="button" pButton label="Add Entry" icon="pi pi-plus" class="p-button-text p-button-sm"
+              (click)="addHistory()"></button>
+          </div>
+
+          <div formArrayName="medicalHistory">
+            <div *ngFor="let history of medicalHistory.controls; let i = index" [formGroupName]="i"
+              class="history-item grid p-3 mb-3">
+              <div class="col-12 md:col-4 field mb-0">
+                <span class="p-float-label">
+                  <input pInputText id="condition-{{ i }}" formControlName="condition" />
+                  <label for="condition-{{ i }}">Condition</label>
+                </span>
+              </div>
+              <div class="col-12 md:col-3 field mb-0">
+                <span class="p-float-label">
+                  <p-calendar id="date-{{ i }}" formControlName="diagnosedDate" [showIcon]="true" [maxDate]="maxDate"
+                    appendTo="body"></p-calendar>
+                  <label for="date-{{ i }}">Date</label>
+                </span>
+              </div>
+              <div class="col-12 md:col-4 field mb-0">
+                <span class="p-float-label">
+                  <input pInputText id="notes-{{ i }}" formControlName="notes" />
+                  <label for="notes-{{ i }}">Notes</label>
+                </span>
+              </div>
+              <div class="col-12 md:col-1 flex align-items-center justify-content-center">
+                <button type="button" pButton icon="pi pi-times" class="p-button-rounded p-button-danger p-button-text"
+                  (click)="removeHistory(i)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact Section -->
+      <div class="form-section shadow-sm" formGroupName="emergencyContact">
+        <h3>Emergency Contact</h3>
+        <div class="grid">
+          <div class="col-12 md:col-4 field pt-3">
+            <span class="p-float-label">
+              <input pInputText id="ec-name" formControlName="name" />
+              <label for="ec-name">Contact Name *</label>
+            </span>
+          </div>
+          <div class="col-12 md:col-4 field pt-3">
+            <span class="p-float-label">
+              <input pInputText id="ec-phone" formControlName="phone" pKeyFilter="num" maxlength="10" />
+              <label for="ec-phone">Contact Phone *</label>
+            </span>
+          </div>
+          <div class="col-12 md:col-4 field pt-3">
+            <span class="p-float-label">
+              <p-dropdown id="ec-relationship" formControlName="relationship" [options]="relationships"
+                optionLabel="label" optionValue="value" placeholder="Select Relationship"></p-dropdown>
+              <label for="ec-relationship">Relationship *</label>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferences Section -->
+      <div class="col-12 field flex align-items-center pt-3">
+        <p-checkbox formControlName="consent" binary="true" inputId="consent"></p-checkbox>
+        <label for="consent" class="ml-2 text-600">I hereby give consent for medical treatment and storage of
+          digital health records. *</label>
+      </div>
+
+      <div class="flex flex-column md:flex-row justify-content-end mt-4 gap-3">
+        <button type="button" pButton label="Discard" class="p-button-outlined p-button-secondary md:w-10rem"
+          (click)="router.navigate(['/patient/list'])"></button>
+        <button type="submit" pButton label="Complete Registration" icon="pi pi-check"
+          class="md:w-15rem p-button-raised shadow-lg" [disabled]="registrationForm.invalid"></button>
+      </div>
+    </form>
+  </p-card>
+
+  <!-- Success Dialog -->
+  <p-dialog header="Success" [(visible)]="displayQrDialog" [modal]="true" [style]="{ width: '450px' }"
+    [closable]="false" [draggable]="false" [resizable]="false" styleClass="premium-dialog">
+    <div class="text-center p-2">
+      <div class="flex justify-content-center mb-4">
+        <div class="border-circle bg-green-100 p-4 inline-flex align-items-center justify-content-center"
+          style="width: 80px; height: 80px">
+          <i class="pi pi-check text-4xl text-green-600"></i>
+        </div>
+      </div>
+
+      <h2 class="m-0 text-900 font-bold mb-2">Registration Complete!</h2>
+      <p class="text-500 mb-4">The patient record has been successfully created.</p>
+
+      <div
+        class="surface-ground border-round-xl p-4 mb-4 text-left border-1 border-200 shadow-sm transition-all hover:shadow-md">
+        <div class="flex align-items-center mb-3">
+          <div class="text-500 w-8rem">Patient</div>
+          <div class="font-bold text-900">{{ registeredPatient?.fullName }}</div>
+        </div>
+        <div class="flex align-items-center mb-2">
+          <div class="text-500 w-8rem">Phone</div>
+          <div class="font-semibold text-700">{{ registeredPatient?.phone | phone }}</div>
+        </div>
+        <div class="flex align-items-center mb-0">
+          <div class="text-500 w-8rem text-lg">Token Number</div>
+          <div class="text-2xl font-bold text-primary bg-primary-reverse border-round-lg px-3 py-1 shadow-sm"
+            style="letter-spacing: 1.5px; border: 1px solid var(--primary-color)">
+            {{ registeredPatient?.tokenNumber }}
+          </div>
+        </div>
+      </div>
+
+
+      <div class="flex flex-column gap-3 mt-4">
+        <button pButton label="Finish and Continue" icon="pi pi-arrow-right" class="p-button-outlined"
+          (click)="closeQrDialog()"></button>
+      </div>
+    </div>
+  </p-dialog>
+</div>

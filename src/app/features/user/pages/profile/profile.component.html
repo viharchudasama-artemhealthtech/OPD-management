@@ -1,0 +1,45 @@
+<div class="grid p-3">
+  <div class="col-12 md:col-6 md:col-offset-3">
+    <p-card styleClass="text-center">
+      <div class="flex flex-column align-items-center mb-4">
+        <p-avatar
+          [image]="(currentUser$ | async)?.avatar"
+          [icon]="!(currentUser$ | async)?.avatar ? 'pi pi-user' : undefined"
+          styleClass="w-8rem h-8rem text-4xl mb-3 bg-primary-100 text-primary"
+          shape="circle"
+        ></p-avatar>
+        <h1 class="text-900 font-bold m-0 mb-2">{{ (currentUser$ | async)?.fullName }}</h1>
+        <span class="text-600 font-medium">{{ (currentUser$ | async)?.role }}</span>
+      </div>
+
+      <div class="text-left border-top-1 surface-border pt-4">
+        <div class="grid">
+          <div class="col-12 md:col-6 mb-3">
+            <span class="text-500 block mb-1">Username</span>
+            <span class="text-900 font-medium text-lg">{{ (currentUser$ | async)?.username }}</span>
+          </div>
+          <div class="col-12 md:col-6 mb-3">
+            <span class="text-500 block mb-1">User ID</span>
+            <span class="text-900 font-medium text-lg">{{ (currentUser$ | async)?.id }}</span>
+          </div>
+          <div class="col-12 mb-3">
+            <span class="text-500 block mb-1">Email</span>
+            <span class="text-900 font-medium text-lg">{{ (currentUser$ | async)?.email || 'Not provided' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-2">
+          <button pButton label="Edit Profile" icon="pi pi-pencil" class="p-button-outlined"></button>
+          <button
+            pButton
+            label="Change Password"
+            icon="pi pi-lock"
+            class="p-button-outlined p-button-secondary"
+          ></button>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

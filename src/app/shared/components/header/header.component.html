@@ -1,0 +1,134 @@
+<header class="app-header p-3 flex justify-content-between align-items-center">
+  <div class="flex align-items-center">
+    <!-- Sidebar Toggle -->
+    <button
+      pButton
+      type="button"
+      icon="pi pi-bars"
+      class="p-button-text p-button-rounded mr-3"
+      (click)="onToggleSidebar()"
+    ></button>
+
+    <div
+      class="logo-section flex align-items-center gap-3 px-3 border-right-1 surface-border"
+      [routerLink]="['/dashboard']"
+    >
+      <i class="pi pi-building text-primary text-3xl"></i>
+      <span class="logo-text font-bold text-xl tracking-tight text-900">
+        {{ systemName$ | async }}
+      </span>
+    </div>
+  </div>
+
+  <div class="flex align-items-center gap-2">
+    <!-- Notifications -->
+    <button
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-bell"
+      class="p-button-rounded p-button-text p-button-secondary relative hover:bg-white-alpha-10 transition-colors"
+      (click)="op.toggle($event)"
+    >
+      @if (unreadCount$ | async; as count) {
+        @if (count > 0) {
+          <p-badge
+            [value]="count.toString()"
+            severity="danger"
+            styleClass="absolute -top-1 -right-1 shadow-1"
+          ></p-badge>
+        }
+      }
+    </button>
+
+    <p-overlayPanel #op styleClass="notification-panel shadow-4 border-round-xl w-25rem" appendTo="body">
+      <ng-template pTemplate>
+        <div class="flex flex-column h-full">
+          <div class="flex align-items-center justify-content-between p-3 border-bottom-1 surface-border">
+            <span class="font-bold text-lg text-900">Notifications</span>
+            <button
+              pButton
+              label="Clear All"
+              class="p-button-text p-button-sm text-primary p-0"
+              (click)="clearAllNotifications()"
+            ></button>
+          </div>
+
+          <div class="overflow-y-auto" style="max-height: 300px">
+            @if (notifications$ | async; as list) {
+              <ul class="list-none p-0 m-0">
+                @for (notification of list; track notification.id) {
+                  <li
+                    class="p-3 hover:surface-hover transition-colors cursor-pointer border-bottom-1 surface-border border-white-alpha-10 last:border-none flex align-items-start gap-3 relative overflow-hidden"
+                  >
+                    <div
+                      class="flex align-items-center justify-content-center border-round-lg p-2 flex-shrink-0"
+                      [class]="notification.read ? 'surface-100 text-500' : 'bg-primary-50 text-primary'"
+                    >
+                      <i [class]="'pi ' + notification.icon + ' text-xl'"></i>
+                    </div>
+                    <div class="flex-1">
+                      <div class="font-medium text-900 mb-1 line-height-3" [class.opacity-60]="notification.read">
+                        {{ notification.title }}
+                      </div>
+                      <div class="text-600 text-sm line-height-3 mb-2" [class.opacity-60]="notification.read">
+                        {{ notification.message }}
+                      </div>
+                      <div class="text-xs text-500 flex align-items-center gap-1">
+                        <i class="pi pi-clock text-xs"></i>
+                        <span>{{ notification.timestamp | date: 'shortTime' }}</span>
+                      </div>
+                    </div>
+                    @if (!notification.read) {
+                      <div class="w-1rem h-1rem border-circle bg-primary absolute top-0 right-0 m-3 shadow-1"></div>
+                    }
+                  </li>
+                } @empty {
+                  <li class="p-4 text-center text-500">
+                    <i class="pi pi-bell-slash text-3xl mb-3 block opacity-50"></i>
+                    No new notifications
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div class="p-2 border-top-1 surface-border bg-surface-50 border-round-bottom-xl text-center">
+            <span class="text-xs text-500 cursor-pointer hover:text-primary transition-colors">
+              View Notification History
+            </span>
+          </div>
+        </div>
+      </ng-template>
+    </p-overlayPanel>
+
+    <!-- User Profile -->
+    @if (currentUser$ | async; as user) {
+      <div
+        class="user-profile flex align-items-center gap-2 cursor-pointer p-ripple"
+        pRipple
+        (click)="menu.toggle($event)"
+      >
+        <p-avatar
+          [image]="user.avatar"
+          [icon]="!user.avatar ? 'pi pi-user' : undefined"
+          styleClass="shadow-1 bg-primary-100 text-primary"
+          shape="circle"
+        ></p-avatar>
+        <div class="hidden lg:block">
+          <div class="text-sm font-semibold text-900 line-height-1">{{ user.fullName }}</div>
+          <div class="text-xs text-500">{{ user.role }}</div>
+        </div>
+        <i class="pi pi-angle-down text-500 text-xs hidden lg:block ml-1"></i>
+      </div>
+    }
+
+    <p-menu
+      #menu
+      [model]="userMenuItems"
+      [popup]="true"
+      styleClass="w-15rem border-round-xl shadow-4"
+      appendTo="body"
+    ></p-menu>
+  </div>
+</header>

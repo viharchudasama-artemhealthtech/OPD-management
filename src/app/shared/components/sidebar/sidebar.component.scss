@@ -1,0 +1,121 @@
+.app-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--surface-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
+  position: relative;
+
+  &.collapsed {
+    width: var(--sidebar-collapsed-width);
+
+    .logo-text,
+    .label {
+      display: none;
+    }
+
+    .menu-item {
+      justify-content: center;
+      padding: 0.75rem !important;
+
+      i {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.sidebar-header {
+  height: 80px;
+  border-bottom: 1px solid var(--surface-border);
+
+  .logo-container {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .logo-text {
+    letter-spacing: -0.5px;
+  }
+}
+
+.sidebar-menu {
+  padding-top: 1.5rem;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--surface-border);
+    border-radius: 10px;
+  }
+}
+
+.menu-item {
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  user-select: none;
+
+  i {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: var(--sidebar-item-hover);
+    color: var(--primary-color);
+
+    i {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    background: var(--sidebar-item-active);
+    color: var(--primary-color);
+    box-shadow: inset 4px 0 0 var(--primary-color);
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.sidebar-footer {
+  .menu-item {
+    &:hover {
+      background: #fff1f2; // Light red for logout
+      color: #e11d48;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+
+    &.collapsed {
+      transform: translateX(0);
+      width: var(--sidebar-width); // Mobile sidebar should be full width when shown
+
+      .logo-text,
+      .label {
+        display: block;
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+<div class="p-4">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">My Appointments</h1>
+    <p-button
+      label="Back to Dashboard"
+      icon="pi pi-arrow-left"
+      styleClass="p-button-text"
+      routerLink="/patient-portal"
+    ></p-button>
+  </div>
+
+  <p-card styleClass="border-round-xl border-1 border-200">
+    <div class="flex justify-content-between align-items-center mb-4">
+      <div class="flex align-items-center gap-2">
+        <label for="statusFilter" class="font-semibold">Filter by Status:</label>
+        <p-dropdown
+          id="statusFilter"
+          [(ngModel)]="selectedStatus"
+          [options]="statusOptions"
+          (onChange)="filterAppointments()"
+          styleClass="w-12rem"
+        >
+        </p-dropdown>
+      </div>
+    </div>
+
+    <p-table
+      [value]="(filteredAppointments$ | async) || []"
+      [rows]="10"
+      [paginator]="true"
+      styleClass="p-datatable-sm"
+      [rowHover]="true"
+      [rowsPerPageOptions]="[10, 20, 50]"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Code</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-apt>
+        <tr>
+          <td>
+            <span class="font-mono font-bold text-primary">{{ apt.id }}</span>
+          </td>
+          <td>Dr. {{ apt.doctorName }}</td>
+          <td>{{ apt.appointmentDate | date: 'mediumDate' }}</td>
+          <td>{{ apt.timeSlot }}</td>
+          <td>
+            <div class="text-overflow-ellipsis overflow-hidden white-space-nowrap" style="max-width: 200px">
+              {{ apt.reason }}
+            </div>
+          </td>
+          <td>
+            <p-tag [value]="apt.status" [severity]="getStatusSeverity(apt.status)"></p-tag>
+          </td>
+          <td>
+            <div class="flex gap-1">
+              <p-button
+                icon="pi pi-eye"
+                styleClass="p-button-text p-button-sm"
+                (onClick)="viewDetails(apt.id)"
+                pTooltip="View Details"
+              ></p-button>
+              <p-button
+                icon="pi pi-times"
+                styleClass="p-button-text p-button-sm p-button-danger"
+                (onClick)="cancelAppointment(apt.id)"
+                pTooltip="Cancel"
+                [disabled]="apt.status !== 'SCHEDULED'"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
+            <p class="text-500">No appointments found</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

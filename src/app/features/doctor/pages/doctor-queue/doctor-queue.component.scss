@@ -1,0 +1,22 @@
+  .emergency-row {
+    background-color: #fee2e2 !important;
+    animation: flash 2s infinite;
+  }
+
+  @keyframes flash {
+    0% {
+      background-color: #fee2e2;
+    }
+
+    50% {
+      background-color: #fecaca;
+    }
+
+    100% {
+      background-color: #fee2e2;
+    }
+  }
+
+  .p-datatable .p-datatable-tbody>tr.emergency-row:hover {
+    background-color: #fecaca !important;
+  }

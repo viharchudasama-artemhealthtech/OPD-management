@@ -1,0 +1,215 @@
+.login-container {
+  background: #0f172a;
+  min-height: 100vh;
+}
+
+.branding-section {
+  background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+  position: relative;
+
+  .medical-pattern {
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  .logo-circle {
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+.form-section {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+::ng-deep {
+  // Input with icon - proper padding
+  .p-input-icon-left > .p-inputtext {
+    padding-left: 2.5rem !important;
+  }
+
+  // Dark theme input styling
+  .p-inputtext {
+    font-size: 1rem;
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+
+    &::placeholder {
+      color: #64748b !important;
+    }
+
+    &:enabled:focus {
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+      border-color: #3b82f6 !important;
+    }
+
+    &:enabled:hover {
+      border-color: #475569 !important;
+    }
+  }
+
+  // Password input
+  .p-password-input {
+    width: 100% !important;
+    padding-left: 2.5rem !important;
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+
+  .p-password-panel {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  // Button styling
+  .p-button {
+    padding: 0.9rem 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: #334155 !important;
+      opacity: 0.6;
+    }
+  }
+
+  // Checkbox styling
+  .p-checkbox .p-checkbox-box {
+    background: #1e293b;
+    border-color: #334155;
+
+    &.p-highlight {
+      border-color: #3b82f6;
+      background: #3b82f6;
+    }
+
+    &:hover {
+      border-color: #475569;
+    }
+  }
+
+  // Message styling
+  .p-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+
+    .p-message-icon {
+      color: #ef4444;
+    }
+  }
+
+  // Tooltip styling
+  .p-tooltip {
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+
+    .p-tooltip-arrow {
+      border-top-color: #1e293b;
+    }
+  }
+}
+
+// Demo credential badges
+.demo-badge {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+}
+
+// Responsive design
+@media screen and (max-width: 960px) {
+  .branding-section {
+    display: none !important;
+  }
+
+  .form-section {
+    width: 100% !important;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    > div {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.surface-card {
+  animation: fadeIn 0.6s ease-out;
+}
+
+// Glassmorphism effect
+.surface-card {
+  background: rgba(30, 41, 59, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}

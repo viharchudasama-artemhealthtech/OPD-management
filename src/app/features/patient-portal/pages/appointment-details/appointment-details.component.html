@@ -1,0 +1,108 @@
+<div class="p-4">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">Appointment Details</h1>
+    <p-button label="Back" icon="pi pi-arrow-left" styleClass="p-button-text" (onClick)="goBack()"></p-button>
+  </div>
+
+  <div *ngIf="appointment$ | async as appointment; else notFound">
+    <div class="grid">
+      <div class="col-12 lg:col-8">
+        <p-card styleClass="border-round-xl border-1 border-200 mb-4">
+          <div class="flex justify-content-between align-items-start mb-4">
+            <div>
+              <h2 class="text-2xl font-bold text-900 m-0 mb-2">{{ appointment.id }}</h2>
+              <p-tag [value]="appointment.status" [severity]="getStatusSeverity(appointment.status)"></p-tag>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="col-12 md:col-6 mb-3">
+              <div class="text-600 mb-1">Doctor</div>
+              <div class="text-900 font-semibold">Dr. {{ appointment.doctorName }}</div>
+            </div>
+
+            <div class="col-12 md:col-6 mb-3">
+              <div class="text-600 mb-1">Patient</div>
+              <div class="text-900 font-semibold">{{ appointment.patientName }}</div>
+            </div>
+
+            <div class="col-12 md:col-6 mb-3">
+              <div class="text-600 mb-1">Date</div>
+              <div class="text-900 font-semibold">
+                <i class="pi pi-calendar mr-2"></i>
+                {{ appointment.appointmentDate | date: 'fullDate' }}
+              </div>
+            </div>
+
+            <div class="col-12 md:col-6 mb-3">
+              <div class="text-600 mb-1">Time</div>
+              <div class="text-900 font-semibold">
+                <i class="pi pi-clock mr-2"></i>
+                {{ appointment.timeSlot }}
+              </div>
+            </div>
+
+            <div class="col-12 md:col-6 mb-3" *ngIf="appointment.patientPhone">
+              <div class="text-600 mb-1">Contact</div>
+              <div class="text-900 font-semibold">
+                <i class="pi pi-phone mr-2"></i>
+                {{ appointment.patientPhone }}
+              </div>
+            </div>
+
+            <div class="col-12 mb-3">
+              <div class="text-600 mb-1">Reason for Visit</div>
+              <div class="text-900">{{ appointment.reason }}</div>
+            </div>
+
+            <div class="col-12 md:col-6 mb-3" *ngIf="appointment.createdAt">
+              <div class="text-600 mb-1">Booked On</div>
+              <div class="text-900">{{ appointment.createdAt | date: 'medium' }}</div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-4" *ngIf="appointment.status === 'BOOKED'">
+            <p-button label="Cancel Appointment" icon="pi pi-times" severity="danger" styleClass="p-button-outlined"
+              (onClick)="cancelAppointment(appointment.id)"></p-button>
+          </div>
+        </p-card>
+      </div>
+
+      <div class="col-12 lg:col-4">
+        <p-card header="Important Information" styleClass="border-round-xl border-1 border-200">
+          <div class="flex flex-column gap-3">
+            <div class="surface-100 p-3 border-round">
+              <div class="font-semibold text-900 mb-2"><i class="pi pi-info-circle mr-2"></i>Before Your Visit</div>
+              <ul class="text-sm text-600 m-0 pl-3">
+                <li class="mb-2">Arrive 15 minutes early</li>
+                <li class="mb-2">Bring your appointment code</li>
+                <li class="mb-2">Bring any previous medical records</li>
+                <li>Carry a valid ID</li>
+              </ul>
+            </div>
+
+            <div class="surface-100 p-3 border-round" *ngIf="appointment.status === 'BOOKED'">
+              <div class="font-semibold text-900 mb-2">
+                <i class="pi pi-exclamation-triangle mr-2"></i>Cancellation Policy
+              </div>
+              <p class="text-sm text-600 m-0">
+                Please cancel at least 24 hours in advance if you cannot make it to your appointment.
+              </p>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #notFound>
+    <p-card styleClass="border-round-xl border-1 border-200">
+      <div class="text-center p-5">
+        <i class="pi pi-exclamation-circle text-6xl text-400 mb-3 block"></i>
+        <h3 class="text-900 mb-2">Appointment Not Found</h3>
+        <p class="text-600 mb-4">The appointment you're looking for doesn't exist.</p>
+        <p-button label="Go to Dashboard" icon="pi pi-home" routerLink="/patient-portal"></p-button>
+      </div>
+    </p-card>
+  </ng-template>
+</div>

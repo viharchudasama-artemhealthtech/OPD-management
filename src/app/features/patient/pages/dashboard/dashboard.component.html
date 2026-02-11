@@ -1,0 +1,88 @@
+<div class="dashboard-container p-3">
+  <div class="mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">My Dashboard</h1>
+    <p class="text-500 m-0">Welcome, {{ currentUser?.fullName }}</p>
+  </div>
+
+  <div class="grid">
+    <!-- My Appointments -->
+    <div class="col-12">
+      <p-card header="My Appointments">
+        <p-table [value]="(myAppointments$ | async) || []" [paginator]="true" [rows]="5" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Code</th>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Reason</th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-appointment>
+            <tr>
+              <td>
+                <span class="font-mono font-bold">{{ appointment.id }}</span>
+              </td>
+              <td>{{ appointment.doctorName }}</td>
+              <td>{{ appointment.appointmentDate | date: 'mediumDate' }}</td>
+              <td>{{ appointment.timeSlot }}</td>
+              <td>{{ appointment.reason }}</td>
+              <td>
+                <p-tag [value]="appointment.status" [severity]="getStatusSeverity(appointment.status)"> </p-tag>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                <i class="pi pi-calendar text-4xl text-400 mb-3 block"></i>
+                <p class="text-500">No appointments found</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <!-- My OPD Tokens -->
+    <div class="col-12">
+      <p-card header="My OPD Tokens">
+        <p-table [value]="(myTokens$ | async) || []" [paginator]="true" [rows]="5" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Token Number</th>
+              <th>Department</th>
+              <th>Visit Type</th>
+              <th>Queue Position</th>
+              <th>Status</th>
+              <th>Created</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-token>
+            <tr>
+              <td>
+                <span class="font-mono font-bold">{{ token.tokenNumber }}</span>
+              </td>
+              <td>{{ token.department }}</td>
+              <td>{{ token.visitType }}</td>
+              <td>{{ token.queuePosition }}</td>
+              <td>
+                <p-tag [value]="token.status" [severity]="getStatusSeverity(token.status)"> </p-tag>
+              </td>
+              <td>{{ token.createdAt | date: 'short' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                <i class="pi pi-ticket text-4xl text-400 mb-3 block"></i>
+                <p class="text-500">No tokens found</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+.app-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+
+  .logo-section {
+    user-select: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    i {
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+    }
+  }
+
+  .user-profile {
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: transparent;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+
+    &:hover {
+      background: var(--surface-hover);
+      border-color: var(--surface-border);
+    }
+
+    &:active {
+      background: var(--sidebar-item-active);
+    }
+  }
+
+  ::ng-deep {
+    .p-button.p-button-text {
+      color: var(--text-color-secondary);
+
+      &:hover {
+        background: var(--surface-hover);
+        color: var(--primary-color);
+      }
+    }
+
+    .p-avatar {
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+      border: 2px solid #ffffff;
+    }
+  }
+}
+
+::ng-deep .notification-panel {
+  width: 380px;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid var(--surface-border);
+  margin-top: 10px;
+
+  .p-overlaypanel-content {
+    padding: 1.25rem !important;
+  }
+
+  &::before,
+  &::after {
+    display: none !important; // Hide the default triangle arrow
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

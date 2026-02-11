@@ -1,0 +1,50 @@
+<aside class="app-sidebar shadow-2" [class.collapsed]="isCollapsed">
+  <!-- Branding Section -->
+  <div class="sidebar-header flex align-items-center justify-content-center p-4">
+    <div class="logo-container flex align-items-center gap-2">
+      <i class="pi pi-building text-primary text-3xl"></i>
+      @if (!isCollapsed) {
+        <span class="logo-text font-bold text-xl tracking-tight text-900"
+          >OPD<span class="text-primary">Sync</span></span
+        >
+      }
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="sidebar-menu flex-grow-1 overflow-y-auto px-3">
+    <div class="menu-items flex flex-column gap-2">
+      @for (item of filteredMenu; track item.route) {
+        <div
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="menu-item p-3 border-round-xl transition-all p-ripple"
+          pRipple
+          [pTooltip]="isCollapsed ? item.label : ''"
+          tooltipPosition="right"
+        >
+          <i [class]="item.icon + ' text-xl'"></i>
+          @if (!isCollapsed) {
+            <span class="label font-medium ml-3">{{ item.label }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer p-3 border-top-1 surface-border">
+    <div
+      class="menu-item p-3 border-round-xl transition-all p-ripple text-danger hover:surface-100"
+      pRipple
+      (click)="logout()"
+      [pTooltip]="isCollapsed ? 'Logout' : ''"
+      tooltipPosition="right"
+    >
+      <i class="pi pi-sign-out text-xl"></i>
+      @if (!isCollapsed) {
+        <span class="label font-medium ml-3">Logout</span>
+      }
+    </div>
+  </div>
+</aside>

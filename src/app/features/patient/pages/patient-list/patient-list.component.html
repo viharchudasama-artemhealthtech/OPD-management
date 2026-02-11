@@ -1,0 +1,47 @@
+@if (patients$ | async; as patients) {
+<div class="p-4 fade-in">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="m-0 text-900 font-bold text-3xl">Patient Directory</h1>
+    <div class="flex gap-2">
+      <button pButton label="New Patient" icon="pi pi-plus" class="p-button-primary"
+        (click)="navigateToRegister()"></button>
+    </div>
+  </div>
+
+  <p-card>
+    <p-table id="patient-table" [value]="patients" [paginator]="true" [rows]="10" responsiveLayout="scroll"
+      styleClass="p-datatable-sm" [rowHover]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age/Gender</th>
+          <th>Phone</th>
+          <th>Blood Group</th>
+          <th>Registered Date</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-patient>
+        <tr>
+          <td>
+            <span class="font-bold">#{{ patient.id }}</span>
+          </td>
+          <td>{{ patient.fullName }}</td>
+          <td>{{ patient.age | age }} / <i [class]="patient.gender | genderIcon"></i> {{ patient.gender }}</td>
+          <td>{{ patient.phone | phone }}</td>
+          <td><p-tag [value]="patient.bloodGroup || 'N/A'" severity="info"></p-tag></td>
+          <td>{{ patient.createdAt | date: 'mediumDate' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-4">
+            <i class="pi pi-users text-4xl text-400 mb-2 block"></i>
+            <p class="text-500">No patients found. Please register a new patient.</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
+}

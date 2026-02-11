@@ -1,0 +1,252 @@
+:host {
+  display: block;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+// Header styles
+h1 {
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Search box
+::ng-deep .p-card {
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.3s ease;
+  }
+}
+
+// Table styling
+::ng-deep .p-datatable {
+  background-color: #ffffff;
+
+  .p-datatable-thead > tr > th {
+    background-color: #f8f9fa;
+    color: #667eea;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+    padding: 1rem;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: 1rem;
+    border-color: #efefef;
+
+    &:last-child {
+      text-align: center;
+    }
+  }
+
+  .p-datatable-tbody > tr:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+// Button styles
+::ng-deep .p-button {
+  &.p-button-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+
+    &:hover {
+      background-color: #5568d3;
+      border-color: #5568d3;
+    }
+  }
+
+  &.p-button-success {
+    background-color: #26a65b;
+    border-color: #26a65b;
+
+    &:hover {
+      background-color: #1e7e34;
+      border-color: #1e7e34;
+    }
+  }
+
+  &.p-button-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+
+    &:hover {
+      background-color: #c0392b;
+      border-color: #c0392b;
+    }
+  }
+
+  &.p-button-text {
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.1);
+    }
+  }
+}
+
+// Tag styles
+::ng-deep .p-tag {
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+
+  &.p-tag-danger {
+    background-color: #fee;
+    color: #c00;
+  }
+
+  &.p-tag-warning {
+    background-color: #ffe5cc;
+    color: #ff6600;
+  }
+
+  &.p-tag-info {
+    background-color: #cfe9ff;
+    color: #0066cc;
+  }
+
+  &.p-tag-success {
+    background-color: #d5f4e6;
+    color: #00a550;
+  }
+
+  &.p-tag-secondary {
+    background-color: #f0f0f0;
+    color: #666;
+  }
+}
+
+// Dialog styling
+::ng-deep .p-dialog {
+  .p-dialog-header {
+    background-color: #667eea;
+    color: white;
+
+    .p-dialog-title {
+      font-weight: 600;
+    }
+
+    .p-dialog-header-close {
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 2rem;
+  }
+}
+
+// Form controls
+::ng-deep .p-input-icon-left > input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+
+  &:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+}
+
+::ng-deep .p-input-icon-left > .pi {
+  left: 0.75rem;
+  color: #999;
+}
+
+// Utility classes
+.flex {
+  display: flex;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.text-500 {
+  color: #6c757d;
+}
+
+.text-900 {
+  color: #212529;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-mono {
+  font-family: 'Courier New', monospace;
+}
+
+.block {
+  display: block;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  ::ng-deep .p-dialog {
+    width: 90vw !important;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}

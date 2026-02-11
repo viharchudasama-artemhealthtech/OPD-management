@@ -1,0 +1,17 @@
+# Build and dependency directories
+dist/
+node_modules/
+
+# Angular specific
+.angular/
+.editorconfig
+
+# IDE specific
+.vscode/
+.idea/
+
+# Lock files
+package-lock.json
+
+# Documentation
+README.md

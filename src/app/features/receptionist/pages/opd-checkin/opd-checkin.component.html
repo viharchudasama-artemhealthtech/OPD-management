@@ -1,0 +1,291 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="flex align-items-center justify-content-between mb-4">
+      <h1 class="text-3xl font-bold m-0 text-900">Patient Check-in</h1>
+      <button pButton icon="pi pi-arrow-left" label="Back to Dashboard" class="p-button-outlined"
+        (click)="goBack()"></button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="col-12">
+    <p-tabView styleClass="w-full">
+      <!-- Tab 1: Walk-in Check-in -->
+      <p-tabPanel header="Walk-in Check-in" leftIcon="pi pi-user-plus">
+        <div class="grid mt-2">
+          <!-- Step 1: Patient Search -->
+          @if (!selectedPatient) {
+          <div class="col-12 md:col-6">
+            <p-card header="Identify Patient" styleClass="h-full">
+              <div class="p-fluid">
+                <span class="p-input-icon-left mb-3">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" [(ngModel)]="searchQuery" (ngModelChange)="searchPatient()"
+                    placeholder="Search by Mobile, ID, or Name" />
+                </span>
+
+                @if (searchResults$ | async; as results) {
+                @if (results.length > 0) {
+                <div class="border-1 surface-border border-round">
+                  @for (patient of results; track patient.id) {
+                  <div
+                    class="search-result-item p-3 border-bottom-1 surface-border flex align-items-center justify-content-between"
+                    (click)="selectPatient(patient)">
+                    <div>
+                      <div class="font-bold">{{ patient.fullName }}</div>
+                      <div class="text-sm text-500">ID: {{ patient.id }} | {{ patient.phone | phone }}</div>
+                    </div>
+                    <i class="pi pi-chevron-right text-500"></i>
+                  </div>
+                  }
+                </div>
+                } @else if (searchQuery.length >= 2) {
+                <div class="text-center p-4">
+                  <p class="text-500 mb-3">No patient found matching "{{ searchQuery }}"</p>
+                  <button pButton label="Register New Patient" icon="pi pi-user-plus" class="p-button-outlined"
+                    [routerLink]="['/patient/register']"></button>
+                </div>
+                }
+                }
+              </div>
+            </p-card>
+          </div>
+          }
+
+          <!-- Step 2: Check-in Details -->
+          @if (selectedPatient) {
+          <div class="col-12 md:col-6">
+            <p-card styleClass="h-full">
+              <ng-template pTemplate="header">
+                <div
+                  class="flex align-items-center justify-content-between p-3 surface-50 border-bottom-1 surface-border font-bold">
+                  <span>Patient Found</span>
+                  <button pButton icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                    (click)="clearSelection()"></button>
+                </div>
+              </ng-template>
+
+              <div class="mb-4">
+                <h2 class="m-0 mb-1 text-900">{{ selectedPatient.fullName }}</h2>
+                <div class="flex gap-3 text-600">
+                  <span><i class="pi pi-id-card mr-1"></i>{{ selectedPatient.id }}</span>
+                  <span><i class="pi pi-mobile mr-1"></i>{{ selectedPatient.phone | phone }}</span>
+                  <span><i [class]="selectedPatient.gender | genderIcon"></i> {{ selectedPatient.age | age }} /
+                    {{ selectedPatient.gender }}</span>
+                </div>
+              </div>
+
+              <form [formGroup]="checkinForm" (ngSubmit)="onSubmit()" class="p-fluid" appAutoNext>
+                <div class="field">
+                  <label>Department</label>
+                  <p-dropdown [options]="departments" formControlName="department" placeholder="Select Department"
+                    [showClear]="true"></p-dropdown>
+                </div>
+
+
+                <div class="field">
+                  <label>Assign Doctor (Optional)</label>
+                  <p-dropdown [options]="doctors" formControlName="doctorId"
+                    placeholder="Select Doctor or Leave Empty for Auto-assign" [showClear]="true" [filter]="true"
+                    filterBy="label"></p-dropdown>
+                  <small class="block mt-1 text-500">System will assign least-loaded doctor if empty.</small>
+                </div>
+
+                <div class="field-checkbox mb-4 p-3 border-round border-1 surface-border"
+                  [class.bg-red-50]="isEmergency" [class.border-red-400]="isEmergency">
+                  <p-inputSwitch [(ngModel)]="isEmergency" name="emergencySwitch"
+                    [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                  <label class="ml-2 font-bold" [class.text-red-600]="isEmergency">
+                    EMERGENCY CASE
+                  </label>
+                  @if (isEmergency) {
+                  <small class="block text-red-500 mt-1">This patient will be prioritized at the top of the
+                    queue.</small>
+                  }
+                </div>
+
+                <button pButton type="submit" [label]="isEmergency ? 'Generate Emergency Token' : 'Generate Token'"
+                  [icon]="isEmergency ? 'pi pi-exclamation-triangle' : 'pi pi-check'" class="mt-3 p-button-lg"
+                  [class.p-button-danger]="isEmergency" [loading]="false"></button>
+              </form>
+            </p-card>
+          </div>
+          }
+
+          <!-- Info Panel - Only visible for walk-ins -->
+          @if (!selectedPatient) {
+          <div class="col-12 md:col-6">
+            <p-card header="Hospital Status Today" styleClass="h-full bg-blue-50">
+              <div class="flex flex-column gap-3">
+                <div class="flex align-items-center gap-3">
+                  <i class="pi pi-users text-2xl text-blue-600"></i>
+                  <div>
+                    <div class="font-bold text-900">Walk-in Patients</div>
+                    <div class="text-600">Standard priority queue assignment</div>
+                  </div>
+                </div>
+              </div>
+            </p-card>
+          </div>
+          }
+        </div>
+      </p-tabPanel>
+
+      <!-- Tab 2: Appointment Check-in -->
+      <p-tabPanel header="Appointment Check-in" leftIcon="pi pi-calendar-check">
+        <div class="grid mt-2">
+          <div class="col-12 md:col-6">
+            <p-card header="Search Appointment" styleClass="h-full">
+              <div class="p-fluid">
+                <label class="mb-2 block font-semibold">Search by Name, Mobile, or Code</label>
+                <div class="p-inputgroup mb-4">
+                  <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+                  <input type="text" pInputText placeholder="Search by name, mobile, or code..."
+                    [(ngModel)]="appointmentSearchQuery" (ngModelChange)="searchAppointment()" />
+                </div>
+
+                <!-- Search Results List -->
+                @if (appointmentSearchResults$ | async; as aptResults) {
+                @if (aptResults.length > 0 && !foundAppointment) {
+                <div class="border-1 surface-border border-round mb-4">
+                  @for (apt of aptResults; track apt.id) {
+                  <div class="search-result-item p-3 border-bottom-1 surface-border" (click)="selectAppointment(apt)">
+                    <div class="flex align-items-center justify-content-between">
+                      <div class="flex-1">
+                        <div class="font-bold text-900 mb-1">{{ apt.patientName }}</div>
+                        @if (apt.patientPhone) {
+                        <div class="text-sm text-600 mb-1">
+                          <i class="pi pi-mobile mr-1"></i>{{ apt.patientPhone | phone }}
+                        </div>
+                        }
+                        <div class="text-sm text-500">
+                          <span class="font-semibold">Dr. {{ apt.doctorName }}</span>
+                          <span class="mx-2">•</span>
+                          {{ apt.appointmentDate | date: 'mediumDate' }} at {{ apt.timeSlot }}
+                        </div>
+                        <div class="text-xs text-primary mt-1">Code: {{ apt.id }}</div>
+                      </div>
+                      <i class="pi pi-chevron-right text-500"></i>
+                    </div>
+                  </div>
+                  }
+                </div>
+                } @else if (appointmentSearchQuery.length >= 2 && !foundAppointment) {
+                <div class="text-center p-4">
+                  <i class="pi pi-search-minus text-4xl text-400 mb-3 block"></i>
+                  <p class="text-500">No appointment found matching "{{ appointmentSearchQuery }}"</p>
+                  <p class="text-xs text-400">Try searching by name, phone, or code</p>
+                </div>
+                }
+                }
+
+                <!-- Selected Appointment Details -->
+                @if (foundAppointment) {
+                <div class="border-round border-1 surface-border p-4 surface-50 text-center">
+                  <i class="pi pi-check-circle text-green-500 text-4xl mb-3"></i>
+                  <div class="font-bold text-xl text-900 mb-2">Appointment Found</div>
+
+                  <div class="text-left bg-white p-3 border-round shadow-1 mb-4">
+                    <div class="grid">
+                      <div class="col-6 text-600">Patient:</div>
+                      <div class="col-6 font-semibold">{{ foundAppointment.patientName }}</div>
+
+                      @if (foundAppointment.patientPhone) {
+                      <div class="col-6 text-600">Mobile:</div>
+                      <div class="col-6 font-semibold">{{ foundAppointment.patientPhone | phone }}</div>
+                      }
+
+                      <div class="col-6 text-600">Doctor:</div>
+                      <div class="col-6 font-semibold">{{ foundAppointment.doctorName }}</div>
+
+                      <div class="col-6 text-600">Date/Time:</div>
+                      <div class="col-6 font-semibold">
+                        {{ foundAppointment.appointmentDate | date: 'mediumDate' }} at {{ foundAppointment.timeSlot }}
+                      </div>
+
+                      <div class="col-6 text-600">Code:</div>
+                      <div class="col-6 font-mono text-primary">{{ foundAppointment.id }}</div>
+
+                      <div class="col-6 text-600">Reason:</div>
+                      <div class="col-6">{{ foundAppointment.reason }}</div>
+                    </div>
+                  </div>
+
+                  @if (foundAppointment.status === 'CHECKED_IN') {
+                  <div class="p-3 bg-yellow-100 text-yellow-800 border-round mb-3">
+                    <i class="pi pi-exclamation-triangle mr-2"></i>
+                    Already Checked In
+                  </div>
+                  }
+
+                  @if (foundAppointment.status !== 'CHECKED_IN') {
+                  <button pButton label="Check In Patient" icon="pi pi-check-circle" class="p-button-success w-full"
+                    (click)="processAppointmentCheckin()"></button>
+                  }
+                </div>
+                }
+              </div>
+            </p-card>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <p-card header="Priority Information" styleClass="h-full bg-yellow-50">
+              <div class="flex flex-column gap-3">
+                <div class="flex align-items-center gap-3">
+                  <i class="pi pi-star-fill text-2xl text-yellow-600"></i>
+                  <div>
+                    <div class="font-bold text-900">High Priority</div>
+                    <div class="text-600">Appointments get priority queue placement</div>
+                  </div>
+                </div>
+                <div class="text-sm text-700 line-height-3 mt-2">
+                  Checking in an appointment will generate a <strong>HIGH PRIORITY</strong> token. The patient will be
+                  placed ahead of walk-ins in the doctor's queue.
+                </div>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+
+<!-- Token Dialog -->
+<p-dialog [(visible)]="displayTokenDialog" [modal]="true" [style]="{ width: '400px' }" (onHide)="closeDialog()"
+  header="Token Generated">
+  @if (generatedToken) {
+  <div class="flex flex-column align-items-center text-center p-4">
+    <div class="text-4xl font-bold text-900 surface-100 px-4 py-2 border-round-xl mb-3 shadow-inner"
+      style="border: 2px solid var(--primary-color); letter-spacing: 2px;">
+      {{ generatedToken.tokenNumber }}
+    </div>
+
+    <div class="flex gap-2 mb-3">
+      <p-tag [value]="generatedToken.department" severity="info" styleClass="text-lg px-3 py-1"></p-tag>
+      @if (generatedToken.priority === 'URGENT') {
+      <p-tag value="EMERGENCY" severity="danger" icon="pi pi-exclamation-triangle"
+        styleClass="text-lg px-3 py-1"></p-tag>
+      }
+      @if (generatedToken.priority === 'HIGH') {
+      <p-tag value="HIGH PRIORITY" severity="warning" styleClass="text-lg px-3 py-1"></p-tag>
+      }
+    </div>
+
+    <div class="w-full text-left surface-100 p-3 border-round mb-3">
+      <div class="flex justify-content-between mb-2">
+        <span class="text-600">Patient</span>
+        <span class="font-bold">{{ generatedToken.patientName }}</span>
+      </div>
+      <div class="flex justify-content-between mb-2">
+        <span class="text-600">Queue Position</span>
+        <span class="font-bold">#{{ generatedToken.queuePosition }}</span>
+      </div>
+    </div>
+
+    <p class="text-500 text-sm">Token generated successfully. You can now proceed.</p>
+
+    <button pButton label="Finish & Close" icon="pi pi-check" class="w-full" (click)="closeDialog()"></button>
+  </div>
+  }
+</p-dialog>

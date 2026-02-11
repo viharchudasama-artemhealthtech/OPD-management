@@ -1,0 +1,209 @@
+<div class="p-4">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="text-3xl font-bold text-900 m-0">User Management</h1>
+      <p class="text-500 m-0">Create, manage, and monitor system users and their roles.</p>
+    </div>
+    <button pButton label="New User" icon="pi pi-plus" class="p-button-primary" (click)="openDialog()"></button>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-4">
+    <p-card>
+      <span class="p-input-icon-left w-full">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Search by name, username, or email..."
+          [(ngModel)]="searchValue"
+          class="w-full"
+        />
+      </span>
+    </p-card>
+  </div>
+
+  <!-- Users Table -->
+  <p-card>
+    <p-table
+      #dt
+      [value]="(users$ | async) || []"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th colspan="7">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                [(ngModel)]="searchValue"
+                (input)="dt.filterGlobal(searchValue, 'contains')"
+                placeholder="Search by name, username, or email..."
+                class="w-full"
+              />
+            </span>
+          </th>
+        </tr>
+        <tr>
+          <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+          <th pSortableColumn="fullName">Full Name <p-sortIcon field="fullName"></p-sortIcon></th>
+          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+          <th pSortableColumn="role">Role <p-sortIcon field="role"></p-sortIcon></th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="lastLogin">Last Login <p-sortIcon field="lastLogin"></p-sortIcon></th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>
+            <span class="font-mono font-bold">{{ user.username }}</span>
+          </td>
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"></p-tag>
+          </td>
+          <td>
+            <p-tag [value]="user.status" [severity]="getStatusSeverity(user.status)"></p-tag>
+          </td>
+          <td>{{ user.lastLogin | date: 'short' }}</td>
+          <td>
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-sm mr-2"
+              (click)="editUser(user)"
+              title="Edit"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-danger p-button-sm"
+              (click)="deleteUser(user)"
+              title="Delete"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-4">
+            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
+            <p class="text-500">No users found.</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- User Dialog -->
+  <p-dialog
+    [(visible)]="displayDialog"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [header]="selectedUser ? 'Edit User' : 'Create New User'"
+    (onHide)="closeDialog()"
+  >
+    @if (displayDialog) {
+      <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+        <div class="grid">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Username</label>
+              <input pInputText type="text" formControlName="username" class="w-full" placeholder="Enter username" />
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Full Name</label>
+              <input pInputText type="text" formControlName="fullName" class="w-full" placeholder="Enter full name" />
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Email</label>
+              <input pInputText type="email" formControlName="email" class="w-full" placeholder="Enter email" />
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Role</label>
+              <p-dropdown
+                [options]="roles"
+                formControlName="role"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Role"
+                class="w-full"
+              ></p-dropdown>
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Status</label>
+              <p-dropdown
+                [options]="[
+                  { label: 'Active', value: 'Active' },
+                  { label: 'Inactive', value: 'Inactive' },
+                ]"
+                formControlName="status"
+                placeholder="Select Status"
+                class="w-full"
+              ></p-dropdown>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="block text-500 font-medium mb-2">Password</label>
+              <input
+                pInputText
+                type="password"
+                formControlName="password"
+                class="w-full"
+                placeholder="Set user password"
+              />
+              <small class="text-500">Default: password123</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-content-end gap-2">
+          <button
+            pButton
+            label="Cancel"
+            icon="pi pi-times"
+            (click)="closeDialog()"
+            class="p-button-text"
+            type="button"
+          ></button>
+          <button
+            pButton
+            [label]="selectedUser ? 'Update' : 'Create'"
+            icon="pi pi-check"
+            class="p-button-success"
+            type="submit"
+            [disabled]="userForm.invalid"
+          ></button>
+        </div>
+      </form>
+    }
+  </p-dialog>
+</div>

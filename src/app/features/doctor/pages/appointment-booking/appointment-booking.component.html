@@ -1,0 +1,120 @@
+<div class="p-3">
+  <div class="mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">Book Appointment</h1>
+    <p class="text-500 m-0">Schedule a follow-up appointment for your patient</p>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 lg:col-8">
+      <p-card>
+        <div class="p-fluid">
+          @if (successMessage) {
+            <p-message severity="success" [text]="successMessage" styleClass="mb-3"></p-message>
+          }
+          @if (errorMessage) {
+            <p-message severity="error" [text]="errorMessage" styleClass="mb-3"></p-message>
+          }
+
+          <div class="field">
+            <label for="patient">Select Patient *</label>
+            <p-dropdown
+              id="patient"
+              [options]="(patients$ | async) || []"
+              [(ngModel)]="selectedPatient"
+              optionLabel="fullName"
+              placeholder="Choose a patient"
+              [filter]="true"
+              filterBy="fullName,phone"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="field">
+            <label for="date">Appointment Date *</label>
+            <p-calendar
+              id="date"
+              [(ngModel)]="appointmentDate"
+              [minDate]="minDate"
+              [showIcon]="true"
+              dateFormat="dd/mm/yy"
+              placeholder="Select date"
+            >
+            </p-calendar>
+          </div>
+
+          <div class="field">
+            <label for="timeSlot">Time Slot *</label>
+            <p-dropdown
+              id="timeSlot"
+              [options]="timeSlots"
+              [(ngModel)]="selectedTimeSlot"
+              placeholder="Choose time slot"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="field">
+            <label for="reason">Reason for Visit *</label>
+            <textarea
+              id="reason"
+              pInputTextarea
+              [(ngModel)]="reason"
+              rows="4"
+              placeholder="Enter reason for appointment"
+            >
+            </textarea>
+          </div>
+
+          <div class="flex gap-2">
+            <button
+              pButton
+              label="Book Appointment"
+              icon="pi pi-calendar-plus"
+              class="p-button-success"
+              (click)="bookAppointment()"
+            ></button>
+            <button
+              pButton
+              label="Reset"
+              icon="pi pi-refresh"
+              class="p-button-secondary p-button-outlined"
+              (click)="resetForm()"
+            ></button>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 lg:col-4">
+      <p-card header="Instructions">
+        <ul class="list-none p-0 m-0">
+          <li class="flex align-items-start mb-3">
+            <i class="pi pi-info-circle text-primary mr-2 mt-1"></i>
+            <span class="text-600">Select a patient from the dropdown</span>
+          </li>
+          <li class="flex align-items-start mb-3">
+            <i class="pi pi-calendar text-primary mr-2 mt-1"></i>
+            <span class="text-600">Choose a future date for the appointment</span>
+          </li>
+          <li class="flex align-items-start mb-3">
+            <i class="pi pi-clock text-primary mr-2 mt-1"></i>
+            <span class="text-600">Select an available time slot</span>
+          </li>
+          <li class="flex align-items-start">
+            <i class="pi pi-file-edit text-primary mr-2 mt-1"></i>
+            <span class="text-600">Provide reason for the visit</span>
+          </li>
+        </ul>
+      </p-card>
+
+      @if (appointmentCode) {
+        <p-card header="Appointment Code" styleClass="mt-3">
+          <div class="text-center">
+            <div class="text-4xl font-bold text-primary mb-2">{{ appointmentCode }}</div>
+            <p class="text-500 text-sm">Share this code with the patient</p>
+          </div>
+        </p-card>
+      }
+    </div>
+  </div>
+</div>

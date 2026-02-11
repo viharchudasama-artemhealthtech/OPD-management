@@ -1,0 +1,359 @@
+<div class="p-4">
+  <p-toast></p-toast>
+
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">System Settings</h1>
+    <p class="text-500 m-0">Configure system-wide settings, backups, and security policies.</p>
+  </div>
+
+  <!-- General Settings -->
+  <p-card class="mb-4">
+    <ng-template pTemplate="header">
+      <h2 class="text-xl font-bold m-0"><i class="pi pi-cog mr-2"></i>General Settings</h2>
+    </ng-template>
+
+    <form [formGroup]="settingsForm" (ngSubmit)="saveGeneralSettings()">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">System Name</label>
+            <input pInputText type="text" formControlName="systemName" class="w-full" placeholder="Enter system name" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">System URL</label>
+            <input
+              pInputText
+              type="text"
+              formControlName="systemUrl"
+              class="w-full"
+              placeholder="https://example.com"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Timezone</label>
+            <p-dropdown
+              [options]="timezones"
+              formControlName="timezone"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">System Email</label>
+            <input
+              pInputText
+              type="email"
+              formControlName="systemEmail"
+              class="w-full"
+              placeholder="system@example.com"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Admin Email</label>
+            <input
+              pInputText
+              type="email"
+              formControlName="adminEmail"
+              class="w-full"
+              placeholder="admin@example.com"
+            />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Maintenance Mode</label>
+            <input type="checkbox" pInputSwitch formControlName="maintenanceMode" />
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="settingsForm.get('maintenanceMode')?.value">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Maintenance Message</label>
+            <textarea
+              pInputTextarea
+              formControlName="maintenanceMessage"
+              rows="3"
+              class="w-full"
+              placeholder="Message to display during maintenance"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button
+        pButton
+        label="Save General Settings"
+        icon="pi pi-check"
+        class="p-button-success w-full"
+        type="submit"
+        [disabled]="settingsForm.invalid"
+      ></button>
+    </form>
+  </p-card>
+
+  <!-- Backup Settings -->
+  <p-card class="mb-4">
+    <ng-template pTemplate="header">
+      <h2 class="text-xl font-bold m-0"><i class="pi pi-save mr-2"></i>Backup Settings</h2>
+    </ng-template>
+
+    <form [formGroup]="backupForm" (ngSubmit)="saveBackupSettings()">
+      <div class="grid">
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Auto Backup</label>
+            <input type="checkbox" pInputSwitch formControlName="autoBackup" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6" *ngIf="backupForm.get('autoBackup')?.value">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Backup Frequency</label>
+            <p-dropdown
+              [options]="backupFrequencies"
+              formControlName="backupFrequency"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2"
+              >Retention Days ({{ backupForm.get('backupRetention')?.value }})</label
+            >
+            <p-slider formControlName="backupRetention" [min]="1" [max]="365" [step]="1"></p-slider>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Backup Location</label>
+            <input pInputText type="text" formControlName="backupLocation" class="w-full" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Compress Backup</label>
+            <input type="checkbox" pInputSwitch formControlName="compressBackup" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Encrypt Backup</label>
+            <input type="checkbox" pInputSwitch formControlName="encryptBackup" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Notify on Backup</label>
+            <input type="checkbox" pInputSwitch formControlName="backupNotification" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-3">
+        <button
+          pButton
+          label="Save Backup Settings"
+          icon="pi pi-check"
+          class="p-button-success flex-1"
+          type="submit"
+          [disabled]="backupForm.invalid"
+        ></button>
+        <button
+          pButton
+          label="Trigger Backup Now"
+          icon="pi pi-download"
+          class="p-button-info flex-1"
+          (click)="triggerBackup()"
+          type="button"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+
+  <!-- Security Settings -->
+  <p-card class="mb-4">
+    <ng-template pTemplate="header">
+      <h2 class="text-xl font-bold m-0"><i class="pi pi-shield mr-2"></i>Security Settings</h2>
+    </ng-template>
+
+    <form [formGroup]="securityForm" (ngSubmit)="saveSecuritySettings()">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Session Timeout (minutes)</label>
+            <p-inputNumber formControlName="sessionTimeout" class="w-full" [min]="5" [max]="480"></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Password Min Length</label>
+            <p-inputNumber formControlName="passwordMinLength" class="w-full" [min]="6" [max]="20"></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Password Expiry (days, 0=disabled)</label>
+            <p-inputNumber formControlName="passwordExpiry" class="w-full" [min]="0" [max]="365"></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Max Login Attempts</label>
+            <p-inputNumber formControlName="maxLoginAttempts" class="w-full" [min]="1" [max]="20"></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Lockout Duration (minutes)</label>
+            <p-inputNumber formControlName="lockoutDuration" class="w-full" [min]="5" [max]="120"></p-inputNumber>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Require Two-Factor Auth</label>
+            <input type="checkbox" pInputSwitch formControlName="requireTwoFactor" />
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Log Level</label>
+            <p-dropdown
+              [options]="logLevels"
+              formControlName="logLevel"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full"
+            ></p-dropdown>
+          </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">Audit Logging</label>
+            <input type="checkbox" pInputSwitch formControlName="auditLogging" />
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="mb-3">
+            <label class="block text-500 font-medium mb-2">IP Whitelist (comma-separated)</label>
+            <textarea
+              pInputTextarea
+              formControlName="ipWhitelist"
+              rows="3"
+              class="w-full"
+              placeholder="192.168.1.1, 10.0.0.0/8, Leave empty to allow all"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button
+        pButton
+        label="Save Security Settings"
+        icon="pi pi-check"
+        class="p-button-success w-full"
+        type="submit"
+        [disabled]="securityForm.invalid"
+      ></button>
+    </form>
+  </p-card>
+
+  <!-- Email Configuration -->
+  <p-card class="mb-4">
+    <ng-template pTemplate="header">
+      <h2 class="text-xl font-bold m-0"><i class="pi pi-envelope mr-2"></i>Email Configuration</h2>
+    </ng-template>
+
+    <div class="grid">
+      <div class="col-12 md:col-6">
+        <div class="mb-3">
+          <label class="block text-500 font-medium mb-2">Select Template</label>
+          <p-dropdown
+            [(ngModel)]="selectedTemplate"
+            [options]="emailTemplates"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-light p-3 border-l-4 border-primary mb-3">
+      <p class="text-500 m-0">Email templates can be customized to match your organization's branding.</p>
+    </div>
+
+    <button
+      pButton
+      label="Test Email Configuration"
+      icon="pi pi-send"
+      class="p-button-info w-full"
+      (click)="testEmailConfiguration()"
+    ></button>
+  </p-card>
+
+  <!-- System Maintenance -->
+  <p-card>
+    <ng-template pTemplate="header">
+      <h2 class="text-xl font-bold m-0"><i class="pi pi-sliders-v mr-2"></i>System Maintenance</h2>
+    </ng-template>
+
+    <div class="grid">
+      <div class="col-12">
+        <h3 class="text-lg font-medium mb-3">Logs Management</h3>
+        <button
+          pButton
+          label="Clear All System Logs"
+          icon="pi pi-trash"
+          class="p-button-danger"
+          (click)="clearLogs()"
+        ></button>
+      </div>
+
+      <div class="col-12 mt-4">
+        <p-divider></p-divider>
+      </div>
+
+      <div class="col-12 mt-3">
+        <h3 class="text-lg font-medium mb-3">Settings Export</h3>
+        <button
+          pButton
+          label="Export Settings"
+          icon="pi pi-download"
+          class="p-button-warning"
+          (click)="exportSettings()"
+        ></button>
+      </div>
+    </div>
+  </p-card>
+</div>

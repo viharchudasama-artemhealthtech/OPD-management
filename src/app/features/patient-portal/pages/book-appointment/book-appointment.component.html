@@ -1,0 +1,119 @@
+<div class="p-4">
+  <p-toast></p-toast>
+
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">Book Appointment</h1>
+    <p-button label="Back to Dashboard" icon="pi pi-arrow-left" styleClass="p-button-text"
+      (onClick)="cancel()"></p-button>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 lg:col-8">
+      <p-card styleClass="border-round-xl border-1 border-200">
+        <form [formGroup]="bookingForm" (ngSubmit)="bookAppointment()" appAutoNext>
+          <!-- Department Selection -->
+          <div class="field mb-4">
+            <label for="department" class="block font-semibold mb-2">Department *</label>
+            <p-dropdown id="department" formControlName="department" [options]="departments"
+              placeholder="Select Department" styleClass="w-full" [showClear]="true">
+            </p-dropdown>
+            <small class="text-red-500"
+              *ngIf="bookingForm.get('department')?.invalid && bookingForm.get('department')?.touched">
+              Department is required
+            </small>
+          </div>
+
+          <!-- Doctor Selection -->
+          <div class="field mb-4">
+            <label for="doctor" class="block font-semibold mb-2">Doctor *</label>
+            <p-dropdown id="doctor" formControlName="doctorId" [options]="filteredDoctors" optionLabel="fullName"
+              optionValue="id" placeholder="Select Doctor" styleClass="w-full"
+              [disabled]="!bookingForm.get('department')?.value" [showClear]="true">
+            </p-dropdown>
+            <small class="text-600" *ngIf="bookingForm.get('department')?.value && filteredDoctors.length === 0">
+              No doctors available in this department
+            </small>
+            <small class="text-red-500"
+              *ngIf="bookingForm.get('doctorId')?.invalid && bookingForm.get('doctorId')?.touched">
+              Doctor is required
+            </small>
+          </div>
+
+          <!-- Date Selection -->
+          <div class="field mb-4">
+            <label for="date" class="block font-semibold mb-2">Appointment Date *</label>
+            <p-calendar id="date" formControlName="appointmentDate" [minDate]="minDate" [maxDate]="maxDate"
+              [showIcon]="true" dateFormat="dd/mm/yy" placeholder="Select Date" styleClass="w-full"
+              [disabled]="!bookingForm.get('doctorId')?.value">
+            </p-calendar>
+            <small class="text-red-500"
+              *ngIf="bookingForm.get('appointmentDate')?.invalid && bookingForm.get('appointmentDate')?.touched">
+              Date is required
+            </small>
+          </div>
+
+          <!-- Time Slot Selection -->
+          <div class="field mb-4">
+            <label for="timeSlot" class="block font-semibold mb-2">Time Slot *</label>
+            <p-dropdown id="timeSlot" formControlName="timeSlot" [options]="availableSlots"
+              placeholder="Select Time Slot" styleClass="w-full"
+              [disabled]="!bookingForm.get('appointmentDate')?.value || availableSlots.length === 0" [showClear]="true">
+            </p-dropdown>
+            <small class="text-600" *ngIf="bookingForm.get('appointmentDate')?.value && availableSlots.length === 0">
+              No available slots for this date
+            </small>
+            <small class="text-red-500"
+              *ngIf="bookingForm.get('timeSlot')?.invalid && bookingForm.get('timeSlot')?.touched">
+              Time slot is required
+            </small>
+          </div>
+
+          <!-- Reason for Visit -->
+          <div class="field mb-4">
+            <label for="reason" class="block font-semibold mb-2">Reason for Visit *</label>
+            <textarea id="reason" pInputTextarea formControlName="reason" rows="4"
+              placeholder="Describe your symptoms or reason for visit (minimum 10 characters)" class="w-full">
+            </textarea>
+            <small class="text-red-500"
+              *ngIf="bookingForm.get('reason')?.invalid && bookingForm.get('reason')?.touched">
+              Please provide a reason (minimum 10 characters)
+            </small>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-2 justify-content-end">
+            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-outlined" (onClick)="cancel()"
+              type="button"></p-button>
+            <p-button label="Book Appointment" icon="pi pi-check" type="submit" [loading]="isLoading"
+              [disabled]="bookingForm.invalid"></p-button>
+          </div>
+        </form>
+      </p-card>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="col-12 lg:col-4">
+      <p-card header="Booking Information" styleClass="border-round-xl border-1 border-200">
+        <div class="flex flex-column gap-3">
+          <div class="surface-100 p-3 border-round">
+            <div class="font-semibold text-900 mb-2"><i class="pi pi-info-circle mr-2"></i>Important</div>
+            <ul class="text-sm text-600 m-0 pl-3">
+              <li class="mb-2">Appointments can be booked up to 30 days in advance</li>
+              <li class="mb-2">Please arrive 15 minutes before your appointment time</li>
+              <li class="mb-2">Bring your appointment code for check-in</li>
+              <li>You can cancel or reschedule from your dashboard</li>
+            </ul>
+          </div>
+
+          <div class="surface-100 p-3 border-round">
+            <div class="font-semibold text-900 mb-2"><i class="pi pi-clock mr-2"></i>Consultation Hours</div>
+            <div class="text-sm text-600">
+              <div class="mb-1">Morning: 9:00 AM - 12:00 PM</div>
+              <div>Afternoon: 2:00 PM - 5:00 PM</div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+::ng-deep .p-datatable-striped tbody > tr:nth-child(odd) {
+  background-color: var(--surface-50);
+}
+
+::ng-deep .font-mono {
+  font-family: 'Courier New', monospace;
+}
+
+::ng-deep .text-primary {
+  color: var(--primary-color);
+}
+
+::ng-deep .w-full {
+  width: 100%;
+}
+
+::ng-deep .gap-2 {
+  gap: 0.5rem;
+}
+
+::ng-deep .mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+::ng-deep .mb-3 {
+  margin-bottom: 1rem;
+}
+
+::ng-deep .mr-2 {
+  margin-right: 0.5rem;
+}
+
+::ng-deep .p-4 {
+  padding: 1.5rem;
+}

@@ -1,0 +1,127 @@
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
+import { Patient } from '../models/patient.model';
+import { NotificationService } from './notification.service';
+import { AppointmentService } from './appointment.service';
+import { DataSyncService } from './data-sync.service';
+import { ActivityService } from './activity.service';
+
+import { PatientRepository } from '../repositories/patient.repository';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PatientService implements OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+  private readonly patientsSubject = new BehaviorSubject<Patient[]>([]);
+
+  public readonly patients$ = this.patientsSubject.asObservable();
+
+  constructor(
+    private readonly notificationService: NotificationService,
+    private readonly appointmentService: AppointmentService,
+    private readonly dataSync: DataSyncService,
+    private readonly activityService: ActivityService,
+    private readonly patientRepository: PatientRepository,
+  ) {
+    this.refreshPatients();
+
+    this.dataSync
+      .onKeyUpdate('patients')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.refreshPatients());
+  }
+
+  private refreshPatients(): void {
+    const patients = this.patientRepository.getPatients();
+    this.patientsSubject.next(patients);
+  }
+
+  public registerPatient(patientData: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Observable<Patient> {
+    if (!patientData.fullName || !patientData.phone) {
+      return throwError(() => new Error('Name and phone are required for registration.'));
+    }
+
+    const existingPatient = this.patientRepository.getPatientByPhone(patientData.phone);
+
+    if (existingPatient) {
+      return throwError(() => new Error(`A patient with this phone number already exists.`));
+    }
+
+    const newPatient: Patient = {
+      ...patientData,
+      id: `PAT-${crypto.randomUUID().substring(0, 8).toUpperCase()}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const updatedList = [...this.patientsSubject.value, newPatient];
+    this.patientRepository.savePatients(updatedList);
+    this.patientsSubject.next(updatedList);
+
+    this.activityService.logActivity(
+      `Patient registered: ${newPatient.fullName}`,
+      'pi pi-user-plus',
+      'text-green-500',
+      'success',
+    );
+
+    this.notificationService.showSuccess('Registration Successful', `${newPatient.fullName} (ID: ${newPatient.id})`);
+
+    return of(newPatient);
+  }
+
+  public updatePatient(patient: Patient): Observable<Patient> {
+    const patients = this.patientsSubject.value;
+    const index = patients.findIndex(p => p.id === patient.id);
+
+    if (index === -1) {
+      return throwError(() => new Error('Patient record not found.'));
+    }
+
+    const updatedList = [...patients];
+    updatedList[index] = { ...patient, updatedAt: new Date() };
+    this.patientRepository.savePatients(updatedList);
+    this.patientsSubject.next(updatedList);
+
+    this.activityService.logActivity(
+      `Patient profile updated: ${patient.fullName}`,
+      'pi pi-user-edit',
+      'text-orange-500',
+      'info',
+    );
+
+    return of(updatedList[index]);
+  }
+
+  public deletePatient(patientId: string): Observable<void> {
+    const patients = this.patientsSubject.value;
+    const patient = patients.find(p => p.id === patientId);
+
+    if (!patient) {
+      return throwError(() => new Error('Patient not found.'));
+    }
+
+    const updatedList = patients.filter(p => p.id !== patientId);
+    this.patientRepository.savePatients(updatedList);
+    this.patientsSubject.next(updatedList);
+
+    // Cascade delete appointments
+    return this.appointmentService.deleteAppointmentsByPatient(patientId).pipe(
+      tap(() => {
+        this.notificationService.showInfo('Patient Removed', `${patient.fullName}'s records have been deleted.`);
+      }),
+      map(() => void 0),
+    );
+  }
+
+  public getPatientById(id: string): Observable<Patient | undefined> {
+    return of(this.patientRepository.getPatientById(id));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

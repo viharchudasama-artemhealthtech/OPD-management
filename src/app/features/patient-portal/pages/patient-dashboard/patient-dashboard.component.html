@@ -1,0 +1,69 @@
+<div class="p-4" *ngIf="currentUser$ | async as user">
+  <!-- Header -->
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold text-900 m-0">Welcome, {{ user.fullName }}</h1>
+    <p-button label="Book Appointment" icon="pi pi-calendar-plus" (onClick)="bookAppointment()"></p-button>
+  </div>
+
+  <!-- Upcoming Appointment Card -->
+  <div class="grid">
+    <div class="col-12 lg:col-8">
+      <p-card header="Next Appointment" styleClass="border-round-xl border-1 border-200 mb-4">
+        <div *ngIf="upcomingAppointment$ | async as appointment; else noUpcoming">
+          <div class="surface-100 p-4 border-round-lg">
+            <div class="flex align-items-start justify-content-between mb-3">
+              <div class="flex-1">
+                <div class="text-2xl font-bold text-900 mb-2">Dr. {{ appointment.doctorName }}</div>
+                <div class="text-600 mb-2">
+                  <i class="pi pi-calendar mr-2"></i>
+                  {{ appointment.appointmentDate | date: 'fullDate' }}
+                </div>
+                <div class="text-600 mb-2">
+                  <i class="pi pi-clock mr-2"></i>
+                  {{ appointment.timeSlot }}
+                </div>
+                <div class="text-600">
+                  <i class="pi pi-tag mr-2"></i>
+                  <span class="font-mono text-primary font-bold">{{ appointment.id }}</span>
+                </div>
+              </div>
+              <p-tag [value]="appointment.status" [severity]="getStatusSeverity(appointment.status)"></p-tag>
+            </div>
+
+            <div class="border-top-1 surface-border pt-3 mt-3">
+              <div class="text-sm text-600 mb-2">Reason for Visit:</div>
+              <div class="text-900">{{ appointment.reason }}</div>
+            </div>
+
+            <div class="flex gap-2 mt-4">
+              <p-button label="View Details" icon="pi pi-eye" styleClass="p-button-outlined"
+                (onClick)="viewAppointmentDetails(appointment.id)"></p-button>
+              <p-button label="Cancel" icon="pi pi-times" severity="danger" styleClass="p-button-outlined"
+                (onClick)="cancelAppointment(appointment.id)"></p-button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noUpcoming>
+          <div class="text-center p-5">
+            <i class="pi pi-calendar text-6xl text-400 mb-3 block"></i>
+            <p class="text-600 mb-3">No upcoming appointments</p>
+            <p-button label="Book Now" icon="pi pi-calendar-plus" (onClick)="bookAppointment()"></p-button>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="col-12 lg:col-4">
+      <p-card header="Quick Actions" styleClass="border-round-xl border-1 border-200 mb-4">
+        <div class="flex flex-column gap-3">
+          <p-button label="Book Appointment" icon="pi pi-calendar-plus" styleClass="w-full"
+            (onClick)="bookAppointment()"></p-button>
+          <p-button label="My Profile" icon="pi pi-user" styleClass="w-full p-button-outlined"
+            routerLink="/profile"></p-button>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+</div>

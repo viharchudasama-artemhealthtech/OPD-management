@@ -1,0 +1,144 @@
+@if (insightStats$ | async; as insights) {
+  <div class="p-4 fade-in">
+    <!-- Quick Insights -->
+    <div class="grid mb-4">
+      @for (insight of insights; track insight.title) {
+        <div class="col-12 md:col-6 lg:col-3">
+          <div
+            class="surface-card p-4 border-round-xl border-1 border-200 shadow-1 flex align-items-center justify-content-between hover:shadow-3 transition-all cursor-default h-full"
+          >
+            <div>
+              <span class="block text-500 font-medium mb-2">{{ insight.title }}</span>
+              <div class="text-3xl font-bold text-900">{{ insight.value }}</div>
+              <div class="mt-2 text-sm flex align-items-center">
+                <span
+                  [class]="insight.trend >= 0 ? 'text-green-500' : 'text-red-500'"
+                  class="font-bold flex align-items-center mr-2"
+                >
+                  <i [class]="insight.trend >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1 text-xs"></i>
+                  {{ insight.trend > 0 ? '+' : '' }}{{ insight.trend }}%
+                </span>
+                <span class="text-500">{{ insight.trendLabel }}</span>
+              </div>
+            </div>
+            <div [class]="insight.bg" class="flex align-items-center justify-content-center border-round-lg p-3">
+              <i [class]="'pi ' + insight.icon + ' ' + insight.color" class="text-2xl"></i>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (chartData$ | async; as chartData) {
+      <div class="grid">
+        <div class="col-12 lg:col-8">
+          <p-card header="Patient Inflow Analysis" styleClass="border-round-xl border-1 border-200 h-full">
+            <p-chart type="line" [data]="chartData" [options]="chartOptions" height="350px"></p-chart>
+          </p-card>
+        </div>
+
+        @if (demographicData$ | async; as demographics) {
+          <div class="col-12 lg:col-4">
+            <p-card header="Patient Demographics" styleClass="border-round-xl border-1 border-200 h-full">
+              <p-chart type="doughnut" [data]="demographics" [options]="demographicOptions" height="300px"></p-chart>
+              <div class="mt-4 flex flex-column gap-2">
+                @for (label of demographics.labels; track label) {
+                  <div class="flex align-items-center justify-content-between text-sm">
+                    <div class="flex align-items-center">
+                      <i class="pi pi-circle-fill mr-2" [style.color]="getDemographicColor($index, demographics)"></i>
+                      <span class="text-600">{{ label }}</span>
+                    </div>
+                    <span class="font-bold">{{ getDemographicValue($index, demographics) }}</span>
+                  </div>
+                }
+              </div>
+            </p-card>
+          </div>
+        }
+      </div>
+    }
+
+    @if (workloadData$ | async; as workload) {
+      <div class="grid mt-4">
+        <div class="col-12">
+          <p-card header="Departmental Workload" styleClass="border-round-xl border-1 border-200 h-full">
+            <p-chart type="bar" [data]="workload" [options]="workloadOptions" height="400px"></p-chart>
+          </p-card>
+        </div>
+      </div>
+    }
+
+    <!-- Recent Appointments -->
+    <div class="grid mt-4">
+      <div class="col-12">
+        <p-card header="Recent Appointments" styleClass="border-round-xl border-1 border-200 h-full">
+          <p-table
+            [value]="(recentAppointments$ | async) || []"
+            [rows]="10"
+            [paginator]="true"
+            styleClass="p-datatable-sm"
+            [rowHover]="true"
+            [rowsPerPageOptions]="[5, 10, 20]"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Code</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Slot</th>
+                <th>Status</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-apt>
+              <tr>
+                <td>
+                  <span class="font-mono font-bold text-primary">{{ apt.id }}</span>
+                </td>
+                <td>{{ apt.patientName }}</td>
+                <td>{{ apt.doctorName }}</td>
+                <td>{{ apt.appointmentDate | date: 'mediumDate' }}</td>
+                <td>{{ apt.timeSlot }}</td>
+                <td>
+                  <p-tag
+                    [value]="apt.status"
+                    [severity]="
+                      apt.status === 'SCHEDULED'
+                        ? 'info'
+                        : apt.status === 'CHECKED_IN'
+                          ? 'warning'
+                          : apt.status === 'COMPLETED'
+                            ? 'success'
+                            : apt.status === 'CANCELLED'
+                              ? 'danger'
+                              : 'secondary'
+                    "
+                  >
+                  </p-tag>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="6" class="text-center p-4">
+                  <i class="pi pi-calendar text-4xl text-400 mb-3 block"></i>
+                  <p class="text-500">No appointments scheduled recently.</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="p-4">
+    <div class="grid">
+      <div class="col-12 lg:col-8">
+        <p-card styleClass="border-round-xl border-1 border-200 h-full">
+          <p-skeleton width="100%" height="350px"></p-skeleton>
+        </p-card>
+      </div>
+    </div>
+  </div>
+}

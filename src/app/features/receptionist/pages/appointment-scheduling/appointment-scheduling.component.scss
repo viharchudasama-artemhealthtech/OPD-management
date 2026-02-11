@@ -1,0 +1,17 @@
+// Appointment scheduling component styles
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .appointment-slip,
+  .appointment-slip * {
+    visibility: visible;
+  }
+
+  .appointment-slip {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  .bg-blue-50 {
+    background-color: #eff6ff !important;
+  }
+
+  .p-datatable .p-datatable-tbody > tr.bg-blue-50:hover {
+    background-color: #dbeafe !important;
+  }
+}

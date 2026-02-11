@@ -1,0 +1,8 @@
+ .search-result-item {
+     cursor: pointer;
+     transition: background-color 0.2s;
+ }
+
+ .search-result-item:hover {
+     background-color: var(--surface-hover);
+ }
