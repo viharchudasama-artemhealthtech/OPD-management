@@ -5,12 +5,13 @@ import { NotificationService } from './notification.service';
 import { AuthService } from './auth.service';
 import { ErrorCode } from '../models/enums/error-code.enum';
 import { AppError } from '../models/error-response.model';
+import { LoggerService } from './logger.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ErrorHandlerService {
-    
+
     private lastErrorMessage = '';
     private lastErrorTime = 0;
     private readonly DEBOUNCE_TIME = 2000; // 2 seconds to prevent spam
@@ -18,12 +19,10 @@ export class ErrorHandlerService {
     constructor(
         private readonly notificationService: NotificationService,
         private readonly authService: AuthService,
-        private readonly router: Router
+        private readonly router: Router,
+        private readonly logger: LoggerService
     ) { }
 
-    /**
-     * Normalizes an HTTP error response into an AppError.
-     */
     public normalizeError(error: HttpErrorResponse): AppError {
         let code = ErrorCode.UNKNOWN_ERROR;
         let message = 'An unexpected error occurred. Please try again later.';
@@ -67,7 +66,7 @@ export class ErrorHandlerService {
 
         // Development-only logging
         if (isDevMode()) {
-            console.error('[GlobalErrorHandler]', {
+            this.logger.debug('GlobalErrorHandler', 'Error details', {
                 code: error.code,
                 status: error.status,
                 message: error.message,
@@ -76,6 +75,11 @@ export class ErrorHandlerService {
         }
     }
 
+    /**
+     * Maps HTTP status codes to application error codes.
+     * @param status - HTTP status code (e.g., 404, 500)
+     * @returns Corresponding ErrorCode enum value
+     */
     private getErrorCode(status: number): ErrorCode {
         switch (status) {
             case 0: return ErrorCode.NETWORK_ERROR;
@@ -90,6 +94,13 @@ export class ErrorHandlerService {
         }
     }
 
+    /**
+     * Generates a user-friendly error message based on HTTP error.
+     * Uses server message if available, otherwise provides default messages.
+     * 
+     * @param error - The HTTP error response
+     * @returns User-friendly error message
+     */
     private getErrorMessage(error: HttpErrorResponse): string {
         // If server provides a specific message, use it
         if (error.error?.message) {
@@ -107,6 +118,11 @@ export class ErrorHandlerService {
         }
     }
 
+    /**
+     * Generates a short summary title for error notifications.
+     * @param code - The application error code
+     * @returns Short error summary for notification title
+     */
     private getErrorSummary(code: ErrorCode): string {
         switch (code) {
             case ErrorCode.NETWORK_ERROR: return 'Connection Error';
@@ -118,17 +134,27 @@ export class ErrorHandlerService {
         }
     }
 
+    /**
+     * Handles unauthorized errors by logging out the user and redirecting to login.
+     */
     private handleUnauthorized(): void {
         this.authService.logout();
         this.router.navigate(['/login']);
     }
 
+    /**
+     * Handles forbidden errors by redirecting to the unauthorized page.
+     */
     private handleForbidden(): void {
         this.router.navigate(['/unauthorized']);
     }
 
     /**
-     * Simple de-duplication logic to prevent notification spam.
+     * Implements debouncing to prevent showing duplicate error notifications.
+     * Suppresses notifications if the same message was shown within DEBOUNCE_TIME.
+     * 
+     * @param message - The error message to check
+     * @returns True if notification should be suppressed, false otherwise
      */
     private shouldSuppressNotification(message: string): boolean {
         const now = Date.now();

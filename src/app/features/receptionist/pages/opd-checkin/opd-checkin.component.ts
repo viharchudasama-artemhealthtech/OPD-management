@@ -25,6 +25,7 @@ import { PatientService } from '../../../../core/services/patient.service';
 import { OpdService } from '../../../../core/services/opd.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
+import { LoggerService } from '../../../../core/services/logger.service';
 
 // Models & Enums
 import { Priority } from '../../../../core/models/enums/priority.enum';
@@ -100,6 +101,7 @@ export class OpdCheckinComponent implements OnInit {
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
+    private readonly logger: LoggerService,
   ) {
     this.checkinForm = this.fb.group({
       department: [null, Validators.required],
@@ -201,7 +203,7 @@ export class OpdCheckinComponent implements OnInit {
         },
         error: (err: Error) => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to generate token' });
-          console.error('Check-in error:', err);
+          this.logger.error('OpdCheckinComponent', 'Check-in error', err);
         },
       });
   }
