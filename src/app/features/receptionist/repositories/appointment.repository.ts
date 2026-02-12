@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Appointment } from '../models/appointment.model';
-import { DataSyncService } from '../services/data-sync.service';
+import { Appointment } from '../../../core/models/appointment.model';
+import { DataSyncService } from '../../../core/services/data-sync.service';
 
 /**
  * AppointmentRepository

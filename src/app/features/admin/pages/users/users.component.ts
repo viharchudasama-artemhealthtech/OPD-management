@@ -14,7 +14,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { AppUser } from '../../../../core/models/user.model';
 import { UserRole } from '../../../../core/models/enums/user-role.enum';
 import { UserStatus } from '../../../../core/models/enums/user-status.enum';
-import { UserService } from '../../../../core/services/user.service';
+import { UserService } from '../../services/user.service';
 import { Observable } from 'rxjs';
 
 @Component({

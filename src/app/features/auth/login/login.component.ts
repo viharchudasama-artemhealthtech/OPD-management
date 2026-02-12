@@ -18,7 +18,7 @@ import { MessageModule } from 'primeng/message';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { AutoNextDirective } from '../../../shared/directives/auto-next.directive';
 
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    
+
     if (this.loginForm.invalid || this.loading) return;
 
     this.loading = true;

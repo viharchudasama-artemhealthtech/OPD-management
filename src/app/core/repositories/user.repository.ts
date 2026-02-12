@@ -25,10 +25,6 @@ export class UserRepository {
     this.init();
   }
 
-  /**
-   * Initialize storage with mock users if empty
-   * Synchronizes existing users with mock data fields (e.g. adding new departments)
-   */
   private init(): void {
 
     const savedUsers = this.dataSync.getItem<AppUser[]>(this.STORAGE_KEY, []);
@@ -68,16 +64,10 @@ export class UserRepository {
     }
   }
 
-  /**
-   * Get all users from storage
-   */
   public getUsers(): AppUser[] {
     return this.dataSync.getItem<AppUser[]>(this.STORAGE_KEY, MOCK_USERS);
   }
 
-  /**
-   * Persist user list to storage
-   */
   public saveUsers(users: AppUser[]): void {
     this.dataSync.setItem(this.STORAGE_KEY, users);
   }

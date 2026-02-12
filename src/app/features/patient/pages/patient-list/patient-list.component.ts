@@ -4,7 +4,7 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { PatientService } from '../../../../core/services/patient.service';
+import { PatientService } from '../../services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';

@@ -11,7 +11,7 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { PatientService } from '../../../../core/services/patient.service';
+import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
 import { AgePipe } from '../../../../shared/pipes/age.pipe';
 import { PhonePipe } from '../../../../shared/pipes/phone.pipe';

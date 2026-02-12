@@ -10,9 +10,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { PatientService } from '../../../../core/services/patient.service';
+import { PatientService } from '../../services/patient.service';
 import { Router } from '@angular/router';
-import { OpdService } from '../../../../core/services/opd.service';
 import { Patient } from '../../../../core/models/patient.model';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
 
@@ -20,11 +19,9 @@ import { DialogModule } from 'primeng/dialog';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { ChipsModule } from 'primeng/chips';
 import { CheckboxModule } from 'primeng/checkbox';
-import { Department, VisitType } from '../../../../core/models/opd.model';
 import { GENDER_OPTIONS, BLOOD_GROUP_OPTIONS, RELATIONSHIP_OPTIONS } from '../../../../core/constants/patient.constants';
 import { AutoNextDirective } from '../../../../shared/directives/auto-next.directive';
 import { PhonePipe } from '../../../../shared/pipes/phone.pipe';
-import { AgePipe } from '../../../../shared/pipes/age.pipe';
 
 @Component({
   selector: 'app-patient-registration',
@@ -45,8 +42,7 @@ import { AgePipe } from '../../../../shared/pipes/age.pipe';
     ChipsModule,
     CheckboxModule,
     AutoNextDirective,
-    PhonePipe,
-    AgePipe
+    PhonePipe
   ],
   providers: [MessageService],
   templateUrl: './patient-registration.component.html',
@@ -71,7 +67,6 @@ export class PatientRegistrationComponent implements OnInit {
 
     private messageService: MessageService,
     public router: Router,
-    private opdService: OpdService,
   ) {
     this.registrationForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -157,29 +152,14 @@ export class PatientRegistrationComponent implements OnInit {
 
     this.patientService.registerPatient(this.registrationForm.value).subscribe({
       next: (patient: Patient) => {
-        // Generate real OPD Token for General Department
-        this.opdService
-          .generateToken(
-            patient.id,
-            patient.fullName,
-            Department.GENERAL,
-            VisitType.WALK_IN,
-            null,
-          )
-          .subscribe(token => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Patient registered and token generated for General OPD',
-            });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Patient registered successfully',
+        });
 
-            this.registeredPatient = {
-              ...patient,
-              tokenNumber: token.tokenNumber,
-            };
-
-            this.displayQrDialog = true;
-          });
+        this.registeredPatient = patient;
+        this.displayQrDialog = true;
       },
       error: () => {
         // Error is handled by global interceptor

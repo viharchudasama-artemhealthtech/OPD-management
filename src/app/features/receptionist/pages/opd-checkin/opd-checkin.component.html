@@ -75,6 +75,17 @@
                 </div>
               </div>
 
+              @if (hasPendingAppointment) {
+              <div class="p-3 mb-3 bg-yellow-100 border-round border-1 border-yellow-400 text-yellow-800">
+                <div class="flex align-items-center mb-2">
+                  <i class="pi pi-exclamation-triangle mr-2 font-bold"></i>
+                  <span class="font-bold">Appointment Found Today!</span>
+                </div>
+                <p class="m-0 text-sm">This patient has a scheduled appointment. Please use the <strong>Appointment
+                    Check-in</strong> tab for priority processing.</p>
+              </div>
+              }
+
               <form [formGroup]="checkinForm" (ngSubmit)="onSubmit()" class="p-fluid" appAutoNext>
                 <div class="field">
                   <label>Department</label>

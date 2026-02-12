@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, combineLatest, map } from 'rxjs';
-import { PatientService } from './patient.service';
-import { AppointmentService } from './appointment.service';
-import { OpdService } from './opd.service';
+import { PatientService } from '../../features/patient/services/patient.service';
+import { AppointmentService } from '../../features/receptionist/services/appointment.service';
+import { OpdService } from '../../features/receptionist/services/opd.service';
 import { Patient } from '../models/patient.model';
 import { OpdToken } from '../models/opd.model';
 import { TokenStatus } from '../models/enums/token-status.enum';
@@ -195,11 +195,11 @@ export class AnalyticsService {
 
         return [
           {
-            title: 'Total OPD Patients',
-            value: tokens.length.toString(),
-            trend: tokens.length,
-            trendLabel: 'visits today',
-            icon: 'pi-id-card',
+            title: 'Total Patients',
+            value: patients.length.toString(),
+            trend: patients.length,
+            trendLabel: 'total registered',
+            icon: 'pi-users',
             color: 'blue',
             bg: 'bg-blue-100',
           },

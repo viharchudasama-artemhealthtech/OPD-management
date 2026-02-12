@@ -10,10 +10,10 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppointmentStatus } from '../../../../core/models/enums/appointment-status.enum';
 import { TokenStatus } from '../../../../core/models/enums/token-status.enum';
-import { PatientService } from '../../../../core/services/patient.service';
-import { AppointmentService } from '../../../../core/services/appointment.service';
-import { OpdService } from '../../../../core/services/opd.service';
-import { UserService } from '../../../../core/services/user.service';
+import { PatientService } from '../../../patient/services/patient.service';
+import { AppointmentService } from '../../../receptionist/services/appointment.service';
+import { OpdService } from '../../../receptionist/services/opd.service';
+import { UserService } from '../../services/user.service';
 import { ActivityService, Activity } from '../../../../core/services/activity.service';
 
 interface DashboardData {

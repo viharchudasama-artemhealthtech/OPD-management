@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { UserRole } from '../../../core/models/user.model';
 import { TooltipModule } from 'primeng/tooltip';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../../features/auth/services/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 
@@ -24,7 +24,7 @@ interface MenuItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent implements OnInit, OnChanges {
-  
+
   @Input() public isCollapsed = false;
   @Input() public userRole: string | null = null;
 
@@ -96,7 +96,7 @@ export class SidebarComponent implements OnInit, OnChanges {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-  ) {}
+  ) { }
 
   public ngOnInit(): void {
     this.filterMenu();

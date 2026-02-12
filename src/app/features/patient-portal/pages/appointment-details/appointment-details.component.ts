@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { AppointmentService } from '../../../../core/services/appointment.service';
+import { AppointmentService } from '../../../receptionist/services/appointment.service';
 import { Appointment } from '../../../../core/models/appointment.model';
 import { AppointmentStatus } from '../../../../core/models/enums/appointment-status.enum';
 

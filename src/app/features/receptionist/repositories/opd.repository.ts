@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { OpdToken, Visit } from '../models/opd.model';
-import { DataSyncService } from '../services/data-sync.service';
+import { OpdToken, Visit } from '../../../core/models/opd.model';
+import { DataSyncService } from '../../../core/services/data-sync.service';
 
 /**
  * OpdRepository

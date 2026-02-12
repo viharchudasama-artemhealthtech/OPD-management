@@ -2,7 +2,7 @@ import { Injectable, isDevMode } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 import { ErrorCode } from '../models/enums/error-code.enum';
 import { AppError } from '../models/error-response.model';
 import { LoggerService } from './logger.service';

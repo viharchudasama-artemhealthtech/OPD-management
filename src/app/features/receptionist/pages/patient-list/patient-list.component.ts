@@ -9,7 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { PatientService } from '../../../../core/services/patient.service';
+import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
 import { AgePipe } from '../../../../shared/pipes/age.pipe';
 import { PhonePipe } from '../../../../shared/pipes/phone.pipe';

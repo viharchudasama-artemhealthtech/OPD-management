@@ -20,10 +20,10 @@ import { take, map } from 'rxjs/operators';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 
 // Services
-import { AppointmentService } from '../../../../core/services/appointment.service';
-import { PatientService } from '../../../../core/services/patient.service';
-import { OpdService } from '../../../../core/services/opd.service';
-import { UserService } from '../../../../core/services/user.service';
+import { AppointmentService } from '../../services/appointment.service';
+import { PatientService } from '../../../patient/services/patient.service';
+import { OpdService } from '../../services/opd.service';
+import { UserService } from '../../../admin/services/user.service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
 import { LoggerService } from '../../../../core/services/logger.service';
 
@@ -84,6 +84,7 @@ export class OpdCheckinComponent implements OnInit {
   public displayTokenDialog: boolean = false;
   public doctors: DropdownOption[] = [];
   public isEmergency: boolean = false;
+  public hasPendingAppointment: boolean = false;
 
   // Appointment Check-in
   public appointmentSearchQuery: string = '';
@@ -164,11 +165,23 @@ export class OpdCheckinComponent implements OnInit {
     this.selectedPatient = patient;
     this.searchQuery = '';
     this.searchSubject.next('');
+
+    // Check for today's appointment
+    const today = new Date();
+    this.appointmentService.appointments$.pipe(take(1)).subscribe(appointments => {
+      this.hasPendingAppointment = appointments.some(apt =>
+        apt.patientId === patient.id &&
+        (apt.status === AppointmentStatus.BOOKED || (apt.status as any) === 'SCHEDULED' || (apt.status as any) === 'booked') &&
+        new Date(apt.appointmentDate).toDateString() === today.toDateString()
+      );
+      this.cdr.markForCheck();
+    });
   }
 
   public clearSelection(): void {
     this.selectedPatient = null;
     this.isEmergency = false;
+    this.hasPendingAppointment = false;
     this.checkinForm.reset({
       visitType: VisitType.WALK_IN,
     });
@@ -236,7 +249,7 @@ export class OpdCheckinComponent implements OnInit {
   public processAppointmentCheckin(): void {
     if (!this.foundAppointment) return;
 
-    const department = Department.GENERAL;
+    const department = this.foundAppointment.department;
 
     this.opdService.checkInAppointment(this.foundAppointment, department).subscribe({
       next: (token: OpdToken) => {

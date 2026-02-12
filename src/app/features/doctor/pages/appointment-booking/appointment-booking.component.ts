@@ -8,9 +8,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageModule } from 'primeng/message';
-import { AppointmentService } from '../../../../core/services/appointment.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { PatientService } from '../../../../core/services/patient.service';
+import { AppointmentService } from '../../../receptionist/services/appointment.service';
+import { AuthService } from '../../../auth/services/auth.service';
+import { PatientService } from '../../../patient/services/patient.service';
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Department } from '../../../../core/models/opd.model';
@@ -111,7 +111,7 @@ export class AppointmentBookingComponent implements OnInit {
         this.resetForm();
         this.cdr.markForCheck();
       },
-      error: (err : Error ) => {
+      error: (err: Error) => {
         this.errorMessage = err.message || 'Failed to book appointment';
         this.successMessage = '';
         this.cdr.markForCheck();

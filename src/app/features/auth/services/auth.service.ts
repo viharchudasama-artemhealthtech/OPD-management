@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, delay } from 'rxjs/operators';
-import { User } from '../models/user.model';
-import { UserRole } from '../models/enums/user-role.enum';
-import { UserStatus } from '../models/enums/user-status.enum';
-import { UserService } from './user.service';
-import { ActivityService } from './activity.service';
+import { User } from '../../../core/models/user.model';
+import { UserRole } from '../../../core/models/enums/user-role.enum';
+import { UserStatus } from '../../../core/models/enums/user-status.enum';
+import { UserService } from '../../admin/services/user.service';
+import { ActivityService } from '../../../core/services/activity.service';
 import { AuthRepository } from '../repositories/auth.repository';
 
 @Injectable({

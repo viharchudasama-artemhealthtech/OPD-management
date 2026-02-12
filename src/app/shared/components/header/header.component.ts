@@ -6,7 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../../features/auth/services/auth.service';
 import { NotificationService, Notification } from '../../../core/services/notification.service';
 import { SystemSettingsService, SystemSettings } from '../../../core/services/system-settings.service';
 import { Observable } from 'rxjs';

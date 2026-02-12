@@ -20,7 +20,8 @@ import { UserRepository } from '../repositories/user.repository';
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
-  private readonly STORAGE_KEY = 'opd_users'; // Keep key for sync listener
+
+  private readonly STORAGE_KEY = 'opd_users';
   private readonly destroy$ = new Subject<void>();
   private readonly usersSubject = new BehaviorSubject<AppUser[]>([]);
 
@@ -31,19 +32,15 @@ export class UserService implements OnDestroy {
     private readonly dataSync: DataSyncService,
     private readonly userRepository: UserRepository,
   ) {
-    // Initial state load
+
     this.refreshState();
 
-    // Listen for storage changes from other tabs/services
     this.dataSync
       .onKeyUpdate(this.STORAGE_KEY)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.refreshState());
   }
 
-  /**
-   * Internal helper to sync BehaviorSubject with Repository
-   */
   private refreshState(): void {
     this.usersSubject.next(this.userRepository.getUsers());
   }
@@ -86,6 +83,7 @@ export class UserService implements OnDestroy {
   }
 
   public updateUser(id: string, userData: Partial<AppUser>): Observable<AppUser> {
+
     const users = this.usersSubject.value;
     const index = users.findIndex(u => u.id === id);
 

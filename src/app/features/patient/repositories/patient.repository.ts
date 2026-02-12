@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Patient } from '../models/patient.model';
-import { DataSyncService } from '../services/data-sync.service';
+import { Patient } from '../../../core/models/patient.model';
+import { DataSyncService } from '../../../core/services/data-sync.service';
 
 /**
  * PatientRepository

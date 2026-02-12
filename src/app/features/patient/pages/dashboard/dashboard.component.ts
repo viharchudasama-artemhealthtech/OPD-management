@@ -4,9 +4,9 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
-import { AppointmentService } from '../../../../core/services/appointment.service';
-import { OpdService } from '../../../../core/services/opd.service';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AppointmentService } from '../../../receptionist/services/appointment.service';
+import { OpdService } from '../../../receptionist/services/opd.service';
+import { AuthService } from '../../../auth/services/auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
     private appointmentService: AppointmentService,
     private opdService: OpdService,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe((user: any) => {
