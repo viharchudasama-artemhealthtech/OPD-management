@@ -21,9 +21,10 @@ export class ErrorHandlerService {
         private readonly authService: AuthService,
         private readonly router: Router,
         private readonly logger: LoggerService
-    ) { }
+    ) {  }
 
     public normalizeError(error: HttpErrorResponse): AppError {
+
         let code = ErrorCode.UNKNOWN_ERROR;
         let message = 'An unexpected error occurred. Please try again later.';
 
@@ -50,6 +51,7 @@ export class ErrorHandlerService {
      * Handles the error by showing notifications and performing side effects (like logout).
      */
     public handleError(error: AppError): void {
+        
         if (this.shouldSuppressNotification(error.message)) {
             return;
         }

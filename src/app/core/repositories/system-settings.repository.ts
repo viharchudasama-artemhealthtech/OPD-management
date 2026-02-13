@@ -14,6 +14,7 @@ import { DataSyncService } from '../services/data-sync.service';
     providedIn: 'root',
 })
 export class SystemSettingsRepository {
+
     private readonly STORAGE_KEY = 'system_settings';
 
     constructor(private readonly dataSync: DataSyncService) { }

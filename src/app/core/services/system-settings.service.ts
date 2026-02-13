@@ -10,6 +10,7 @@ import { DataSyncService } from './data-sync.service';
   providedIn: 'root',
 })
 export class SystemSettingsService implements OnDestroy {
+
   private readonly destroy$ = new Subject<void>();
   private readonly settingsSubject: BehaviorSubject<SystemSettings>;
   public readonly settings$: Observable<SystemSettings>;
