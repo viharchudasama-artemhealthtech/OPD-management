@@ -19,16 +19,10 @@ export class SystemSettingsRepository {
 
     constructor(private readonly dataSync: DataSyncService) { }
 
-    /**
-     * Get system settings from storage
-     */
     public getSettings(): SystemSettings {
         return this.dataSync.getItem<SystemSettings>(this.STORAGE_KEY, DEFAULT_SYSTEM_SETTINGS);
     }
 
-    /**
-     * Persist system settings to storage
-     */
     public saveSettings(settings: SystemSettings): void {
         this.dataSync.setItem(this.STORAGE_KEY, settings);
     }

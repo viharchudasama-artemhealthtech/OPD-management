@@ -1,0 +1,47 @@
+<div class="p-4">
+    <div class="flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-3xl font-bold text-900 m-0">My Prescriptions</h1>
+            <p class="text-600 m-0">View medication instructions from your doctors</p>
+        </div>
+    </div>
+
+    <p-card styleClass="border-round-xl border-1 border-200 shadow-1">
+        <p-table [value]="prescriptions" [loading]="isLoading" dataKey="id" responsiveLayout="scroll" [rows]="10"
+            [paginator]="true" styleClass="p-datatable-striped">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Date</th>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Medicines</th>
+                    <th style="width: 5rem"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-prescription>
+                <tr>
+                    <td>{{ prescription.date | date:'dd/MM/yyyy' }}</td>
+                    <td class="font-bold">{{ prescription.doctorName }}</td>
+                    <td>{{ prescription.department }}</td>
+                    <td>
+                        <div class="text-xs text-600">
+                            {{ prescription.medicines.length }} medicine(s) prescribed
+                        </div>
+                    </td>
+                    <td>
+                        <button pButton icon="pi pi-file-pdf" class="p-button-rounded p-button-text p-button-danger"
+                            (click)="downloadPrescription(prescription)" pTooltip="Download Prescription PDF"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5" class="text-center p-5">
+                        <i class="pi pi-file-medical text-3xl text-300 mb-2 block"></i>
+                        No prescriptions found.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>

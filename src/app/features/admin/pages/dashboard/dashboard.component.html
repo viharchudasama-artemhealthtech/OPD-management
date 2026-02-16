@@ -1,153 +1,127 @@
-<div class="grid p-3" *ngIf="dashboardData$ | async as data">
-  <!-- Header -->
-  <div class="col-12 mb-3">
-    <h1 class="text-3xl font-bold text-900 m-0">Master Admin Dashboard</h1>
-    <p class="text-500 m-0">Complete system overview and control panel.</p>
-  </div>
-
-  <!-- KPIs -->
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-2 p-3 border-round">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Total Patients</span>
-          <div class="text-900 font-medium text-xl">{{ data.totalPatients }}</div>
-        </div>
-        <div
-          class="flex align-items-center justify-content-center bg-blue-100 border-round"
-          style="width: 2.5rem; height: 2.5rem"
-        >
-          <i class="pi pi-users text-blue-500 text-xl"></i>
-        </div>
-      </div>
-      <span class="text-green-500 font-medium">+24 new </span>
-      <span class="text-500">this month</span>
+<div class="admin-dashboard-wrapper p-4 bg-50 min-h-screen" *ngIf="dashboardData$ | async as data">
+  <!-- Header Section -->
+  <div class="flex flex-column md:flex-row justify-content-between align-items-center mb-6 gap-3 pt-2">
+    <div>
+      <h1 class="text-3xl font-bold text-900 m-0">Dashboard Overview</h1>
+      <p class="text-600 m-0 text-sm">Welcome back to your system management hub</p>
+    </div>
+    <div class="flex gap-2">
+      <p-tag severity="info" [value]="(today | date:'MMM d, y') ?? ''" styleClass="px-3 py-1 font-semibold"></p-tag>
     </div>
   </div>
 
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-2 p-3 border-round">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Active Appointments</span>
-          <div class="text-900 font-medium text-xl">{{ data.activeAppointments }}</div>
-        </div>
-        <div
-          class="flex align-items-center justify-content-center bg-orange-100 border-round"
-          style="width: 2.5rem; height: 2.5rem"
-        >
-          <i class="pi pi-calendar text-orange-500 text-xl"></i>
-        </div>
-      </div>
-      <span class="text-500">Scheduled today</span>
-    </div>
-  </div>
-
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-2 p-3 border-round">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">OPD Queue</span>
-          <div class="text-900 font-medium text-xl">{{ data.activeQueue }}</div>
-        </div>
-        <div
-          class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-          style="width: 2.5rem; height: 2.5rem"
-        >
-          <i class="pi pi-list text-cyan-500 text-xl"></i>
-        </div>
-      </div>
-      <span class="text-500">Patients in queue</span>
-    </div>
-  </div>
-
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-2 p-3 border-round">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Total Users</span>
-          <div class="text-900 font-medium text-xl">{{ data.totalUsers }}</div>
-        </div>
-        <div
-          class="flex align-items-center justify-content-center bg-green-100 border-round"
-          style="width: 2.5rem; height: 2.5rem"
-        >
-          <i class="pi pi-user-check text-green-500 text-xl"></i>
-        </div>
-      </div>
-      <span class="text-500">Staff accounts</span>
-    </div>
-  </div>
-
-  <!-- System Status -->
-  <div class="col-12 lg:col-6">
-    <p-card header="System Status">
-      <p-table [value]="data.systemStatus" [paginator]="false" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Component</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-item>
-          <tr>
-            <td class="font-medium">{{ item.name }}</td>
-            <td>
-              <p-tag [value]="item.status" [severity]="item.severity"></p-tag>
-            </td>
-            <td>
-              <button pButton icon="pi pi-refresh" class="p-button-rounded p-button-text p-button-sm"></button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-  </div>
-
-  <!-- Recent Activity -->
-  <div class="col-12 lg:col-6">
-    <p-card header="Recent System Activity">
-      <div class="flex flex-column gap-3">
-        <div
-          *ngFor="let activity of data.activities"
-          class="flex align-items-start gap-3 pb-3 border-bottom-1 surface-border"
-        >
-          <div class="w-2rem h-2rem flex align-items-center justify-content-center border-circle bg-gray-100 shrink-0">
-            <i [class]="activity.icon + ' ' + activity.color"></i>
+  <!-- KPI Grid -->
+  <div class="grid mb-5">
+    <div *ngFor="let stat of data.stats" class="col-12 md:col-6 lg:col-3">
+      <p-card styleClass="shadow-2 border-round-xl hover:shadow-4 transition-all">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <div class="flex align-items-center justify-content-center border-round-lg w-3rem h-3rem"
+            [ngClass]="stat.bg || ''">
+            <i [class]="'pi ' + stat.icon + ' text-xl'" [style.color]="'var(--' + stat.color + '-700)'"></i>
           </div>
-          <div class="flex-grow-1">
-            <span class="text-900 font-medium block mb-1">{{ activity.message }}</span>
-            <span class="text-500 text-sm">{{ activity.timeLabel }}</span>
+          <div class="text-right">
+            <span class="block text-500 font-bold uppercase text-xs mb-1">{{ stat.title }}</span>
+            <div class="text-2xl font-bold text-900">{{ stat.value }}</div>
           </div>
         </div>
-      </div>
-    </p-card>
+        <div class="text-sm font-semibold text-green-600">
+          <i class="pi pi-arrow-up text-xs mr-1"></i>
+          {{ stat.trendLabel }}
+        </div>
+      </p-card>
+    </div>
   </div>
 
-  <!-- Quick Links -->
-  <div class="col-12">
-    <p-card header="Quick Actions">
-      <div class="grid gap-2">
-        <div class="col-12 md:col-6 lg:col-3">
-          <button
-            pButton
-            label="Manage Users"
-            icon="pi pi-users"
-            class="w-full p-button-secondary"
-            routerLink="/admin/users"
-          ></button>
+  <div class="grid">
+    <!-- Monitor Section -->
+    <div class="col-12 lg:col-7">
+      <p-card styleClass="shadow-2 border-round-xl h-full">
+        <ng-template pTemplate="title">
+          <span class="text-lg font-bold">System Status</span>
+        </ng-template>
+
+        <div class="grid pb-4">
+          <div *ngFor="let item of data.systemStatus" class="col-12 sm:col-6 lg:col-4 mb-3">
+            <div
+              class="p-3 border-1 surface-border border-round-lg hover:border-primary transition-colors h-full bg-50">
+              <div class="flex align-items-center gap-3 mb-2">
+                <i [class]="'pi ' + item.icon + ' text-lg text-primary'"></i>
+                <span class="font-semibold text-800 text-sm">{{ item.name }}</span>
+              </div>
+              <div class="flex justify-content-between align-items-end">
+                <p-tag [value]="item.status" [severity]="item.severity" styleClass="text-xs"></p-tag>
+                <span class="text-xs text-600 font-semibold">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-12 md:col-6 lg:col-3">
-          <button
-            pButton
-            label="View All Patients"
-            icon="pi pi-list"
-            class="w-full p-button-secondary"
-            routerLink="/admin/patients"
-          ></button>
+
+        <div class="pt-4 border-top-1 surface-border flex gap-2">
+          <button pButton label="System Audit" icon="pi pi-shield" class="p-button-outlined p-button-sm"></button>
+          <button pButton label="Cache" icon="pi pi-refresh" class="p-button-outlined p-button-sm"></button>
+          <button pButton label="Sync" icon="pi pi-sync" class="p-button-sm"></button>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Activity Section -->
+    <div class="col-12 lg:col-5">
+      <p-card styleClass="shadow-2 border-round-xl h-full">
+        <ng-template pTemplate="title">
+          <div class="flex justify-content-between align-items-center">
+            <span class="text-lg font-bold">Recent Activity</span>
+            <p-button label="View All" [text]="true" styleClass="p-0 font-semibold text-sm"></p-button>
+          </div>
+        </ng-template>
+
+        <div class="timeline-stream">
+          <div *ngFor="let activity of data.activities; let last = last" class="mb-4">
+            <div class="flex align-items-start gap-3 p-3 border-round-lg bg-50">
+              <div
+                class="w-2rem h-2rem flex-shrink-0 flex align-items-center justify-content-center border-circle bg-white shadow-1">
+                <i [class]="activity.icon + ' ' + (activity.color || 'text-primary') + ' text-sm'"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="flex justify-content-between mb-1">
+                  <span class="text-sm font-bold text-900">{{ activity.message }}</span>
+                  <span class="text-xs text-500">{{ activity.timeLabel }}</span>
+                </div>
+                <p class="m-0 text-xs text-600">Administrative system update.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Bottom Quick Access -->
+  <div class="mt-6">
+    <h3 class="text-lg font-bold text-900 mb-4">Quick Management</h3>
+    <div class="grid">
+      <div class="col-6 md:col-4 lg:col-2">
+        <div
+          class="surface-card p-4 border-round-xl shadow-2 text-center hover:bg-primary-50 transition-all cursor-pointer border-1 surface-border group"
+          routerLink="/admin/users">
+          <i class="pi pi-users text-2xl mb-2 text-primary"></i>
+          <div class="font-semibold text-sm">Users</div>
         </div>
       </div>
-    </p-card>
+      <div class="col-6 md:col-4 lg:col-2">
+        <div
+          class="surface-card p-4 border-round-xl shadow-2 text-center hover:bg-primary-50 transition-all cursor-pointer border-1 surface-border group"
+          routerLink="/admin/patients">
+          <i class="pi pi-id-card text-2xl mb-2 text-primary"></i>
+          <div class="font-semibold text-sm">Patients</div>
+        </div>
+      </div>
+      <div class="col-6 md:col-4 lg:col-2">
+        <div
+          class="surface-card p-4 border-round-xl shadow-2 text-center hover:bg-primary-50 transition-all cursor-pointer border-1 surface-border group opacity-60">
+          <i class="pi pi-cog text-2xl mb-2 text-primary"></i>
+          <div class="font-semibold text-sm">Settings</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

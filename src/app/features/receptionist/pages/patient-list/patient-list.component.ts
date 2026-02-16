@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
+import { OpdService } from '../../services/opd.service';
+import { Router } from '@angular/router';
 import { AgePipe } from '../../../../shared/pipes/age.pipe';
 import { PhonePipe } from '../../../../shared/pipes/phone.pipe';
 import { GenderIconPipe } from '../../../../shared/pipes/gender-icon.pipe';
@@ -45,6 +48,8 @@ export class PatientListComponent implements OnInit {
 
   constructor(
     private patientService: PatientService,
+    private opdService: OpdService,
+    private router: Router,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
@@ -99,5 +104,17 @@ export class PatientListComponent implements OnInit {
         this.patientService.deletePatient(patient.id).subscribe();
       },
     });
+  }
+
+  isBillingEnabled(patientId: string): Observable<boolean> {
+    return this.opdService.hasCompletedVisitToday(patientId);
+  }
+
+  recordVitals(patientId: string): void {
+    this.router.navigate(['/receptionist/vitals', patientId]);
+  }
+
+  generateBill(patientId: string): void {
+    this.router.navigate(['/receptionist/billing'], { queryParams: { patientId } });
   }
 }

@@ -32,10 +32,18 @@
         <td>{{ patient.age | age }} / <i [class]="patient.gender | genderIcon"></i> {{ patient.gender }}</td>
         <td>{{ patient.phone | phone }}</td>
         <td>
+          <button pButton icon="pi pi-heart" class="p-button-rounded p-button-text p-button-success mr-2"
+            (click)="recordVitals(patient.id)" pTooltip="Record Vitals"></button>
+
+          <ng-container *ngIf="isBillingEnabled(patient.id) | async">
+            <button pButton icon="pi pi-receipt" class="p-button-rounded p-button-text p-button-warning mr-2"
+              (click)="generateBill(patient.id)" pTooltip="Generate Bill"></button>
+          </ng-container>
+
           <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info mr-2"
-            (click)="editPatient(patient)"></button>
+            (click)="editPatient(patient)" pTooltip="Edit Patient"></button>
           <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-            (click)="deletePatient(patient)"></button>
+            (click)="deletePatient(patient)" pTooltip="Delete Patient"></button>
         </td>
       </tr>
     </ng-template>

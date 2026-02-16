@@ -25,13 +25,13 @@
 
           <!-- Doctor Selection -->
           <div class="field mb-4">
-            <label for="doctor" class="block font-semibold mb-2">Doctor *</label>
+            <label for="doctor" class="block font-semibold mb-2">Consultant *</label>
             <p-dropdown id="doctor" formControlName="doctorId" [options]="filteredDoctors" optionLabel="fullName"
-              optionValue="id" placeholder="Select Doctor" styleClass="w-full"
+              optionValue="id" placeholder="Select Consultant" styleClass="w-full"
               [disabled]="!bookingForm.get('department')?.value" [showClear]="true">
             </p-dropdown>
             <small class="text-600" *ngIf="bookingForm.get('department')?.value && filteredDoctors.length === 0">
-              No doctors available in this department
+              No consultants available in this department
             </small>
             <small class="text-red-500"
               *ngIf="bookingForm.get('doctorId')?.invalid && bookingForm.get('doctorId')?.touched">

@@ -1,13 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of, throwError, combineLatest } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { Patient } from '../../../core/models/patient.model';
+import { UserRole } from '../../../core/models/enums/user-role.enum';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AppointmentService } from '../../receptionist/services/appointment.service';
 import { DataSyncService } from '../../../core/services/data-sync.service';
 import { ActivityService } from '../../../core/services/activity.service';
 
 import { PatientRepository } from '../repositories/patient.repository';
+import { UserService } from '../../admin/services/user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -24,6 +26,7 @@ export class PatientService implements OnDestroy {
         private readonly dataSync: DataSyncService,
         private readonly activityService: ActivityService,
         private readonly patientRepository: PatientRepository,
+        private readonly userService: UserService,
     ) {
         this.refreshPatients();
 
@@ -117,7 +120,30 @@ export class PatientService implements OnDestroy {
     }
 
     public getPatientById(id: string): Observable<Patient | undefined> {
-        return of(this.patientRepository.getPatientById(id));
+        return combineLatest([this.patients$, this.userService.getUsers()]).pipe(
+            map(([patients, users]) => {
+                const patient = patients.find(p => p.id === id);
+                if (patient) return patient;
+
+                // Fallback: Check if it's a Portal User (Role: PATIENT)
+                const user = users.find(u => u.id === id && u.role === UserRole.PATIENT);
+                if (user) {
+                    // Create a "Virtual Patient" from User data
+                    return {
+                        id: user.id,
+                        fullName: user.fullName,
+                        phone: user.phone || 'Portal User',
+                        email: user.email,
+                        gender: user.gender,
+                        age: user.age,
+                        createdAt: user.createdAt,
+                        updatedAt: user.updatedAt
+                    } as Patient;
+                }
+
+                return undefined;
+            })
+        );
     }
 
     ngOnDestroy(): void {

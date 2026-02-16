@@ -1,27 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary-color: #6366f1;
+  --primary-color: #3b82f6;
+  /* Standard Medical Blue */
+  --primary-dark: #1d4ed8;
   --primary-color-text: #ffffff;
   --surface-card: #ffffff;
   --surface-ground: #f8fafc;
   --surface-section: #ffffff;
   --surface-border: #e2e8f0;
   --surface-hover: #f1f5f9;
-  --text-color: #1e293b;
+  --text-color: #0f172a;
+  /* Deeper slate for better contrast */
   --text-color-secondary: #64748b;
-  --border-radius: 12px;
+  --border-radius: 16px;
+  /* Unified larger radius */
 
-  --bg-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --soft-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -3px rgba(0, 0, 0, 0.03);
 
   /* Sidebar Variables */
   --sidebar-width: 280px;
   --sidebar-collapsed-width: 88px;
   --sidebar-bg: #ffffff;
-  --sidebar-item-hover: rgba(99, 102, 241, 0.05);
-  --sidebar-item-active: rgba(99, 102, 241, 0.1);
+  --sidebar-item-hover: rgba(59, 130, 246, 0.05);
+  --sidebar-item-active: rgba(59, 130, 246, 0.1);
 }
 
 * {
@@ -62,18 +67,27 @@ a {
 
 .p-card {
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--soft-shadow);
   border: 1px solid var(--surface-border);
+  background: var(--surface-card);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
 }
 
 .p-button {
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
   }
 
   &:active {
@@ -96,24 +110,24 @@ a {
 }
 
 /* Fix for input fields with icons - prevent text overlap */
-.p-input-icon-left > .p-inputtext,
-.p-input-icon-left > input.p-inputtext {
+.p-input-icon-left>.p-inputtext,
+.p-input-icon-left>input.p-inputtext {
   padding-left: 2.5rem !important;
 }
 
-.p-input-icon-right > .p-inputtext,
-.p-input-icon-right > input.p-inputtext {
+.p-input-icon-right>.p-inputtext,
+.p-input-icon-right>input.p-inputtext {
   padding-right: 2.5rem !important;
 }
 
 /* Ensure icons are positioned correctly */
-.p-input-icon-left > i,
-.p-input-icon-left > svg {
+.p-input-icon-left>i,
+.p-input-icon-left>svg {
   left: 0.75rem;
 }
 
-.p-input-icon-right > i,
-.p-input-icon-right > svg {
+.p-input-icon-right>i,
+.p-input-icon-right>svg {
   right: 0.75rem;
 }
 
@@ -155,6 +169,7 @@ a {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
@@ -211,16 +226,16 @@ a {
     font-size: 0.875rem;
   }
 
-  .p-datatable .p-datatable-thead > tr > th {
+  .p-datatable .p-datatable-thead>tr>th {
     padding: 0.5rem;
   }
 
-  .p-datatable .p-datatable-tbody > tr > td {
+  .p-datatable .p-datatable-tbody>tr>td {
     padding: 0.5rem;
   }
 
   /* Stack cards on mobile */
-  .grid > div[class*='col-'] {
+  .grid>div[class*='col-'] {
     width: 100% !important;
   }
 
@@ -243,7 +258,7 @@ a {
   }
 
   /* Tablet optimizations */
-  .grid > div[class*='lg:col-'] {
+  .grid>div[class*='lg:col-'] {
     width: 50% !important;
   }
 }

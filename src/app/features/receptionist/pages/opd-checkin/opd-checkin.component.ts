@@ -274,4 +274,16 @@ export class OpdCheckinComponent implements OnInit {
       },
     });
   }
+
+  public recordVitals(patientId: string): void {
+    this.router.navigate(['/receptionist/vitals', patientId]);
+  }
+
+  public generateBill(patientId: string): void {
+    this.router.navigate(['/receptionist/billing'], { queryParams: { patientId } });
+  }
+
+  public isBillingEnabled(patientId: string): Observable<boolean> {
+    return this.opdService.hasCompletedVisitToday(patientId);
+  }
 }

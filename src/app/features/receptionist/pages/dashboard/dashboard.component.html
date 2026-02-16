@@ -2,20 +2,30 @@
   <div class="flex justify-content-between align-items-center mb-4">
     <h1 class="text-3xl font-bold m-0">Receptionist Dashboard</h1>
     <div class="flex gap-2">
-      <button
-        pButton
-        label="Check-in Patient"
-        icon="pi pi-check-square"
-        class="p-button-primary"
-        [routerLink]="['/receptionist/checkin']"
-      ></button>
-      <button
-        pButton
-        label="New Patient"
-        icon="pi pi-user-plus"
-        class="p-button-success"
-        [routerLink]="['/receptionist/patients']"
-      ></button>
+      <button pButton label="Check-in Patient" icon="pi pi-check-square" class="p-button-primary"
+        [routerLink]="['/receptionist/checkin']"></button>
+      <button pButton label="New Patient" icon="pi pi-user-plus" class="p-button-success"
+        [routerLink]="['/receptionist/patients']"></button>
     </div>
   </div>
+
+  @if (stats$ | async; as stats) {
+  <div class="grid">
+    <div *ngFor="let stat of stats" class="col-12 md:col-6 lg:col-3">
+      <div class="surface-card shadow-2 p-3 border-round">
+        <div class="flex justify-content-between mb-3">
+          <div>
+            <span class="block text-500 font-medium mb-3">{{ stat.title }}</span>
+            <div class="text-900 font-medium text-xl">{{ stat.value }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center border-round" [ngClass]="stat.bg"
+            style="width: 2.5rem; height: 2.5rem">
+            <i [class]="'pi ' + stat.icon + ' text-xl'" [style.color]="'var(--' + stat.color + '-500)'"></i>
+          </div>
+        </div>
+        <span class="text-green-500 font-medium">{{ stat.trendLabel }}</span>
+      </div>
+    </div>
+  </div>
+  }
 </div>

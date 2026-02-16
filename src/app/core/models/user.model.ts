@@ -12,6 +12,9 @@ export interface User extends BaseEntity {
   readonly fullName: string;
   readonly role: UserRole;
   readonly email?: string;
+  readonly phone?: string;
+  readonly age?: number;
+  readonly gender?: string;
   readonly token?: string;
   readonly avatar?: string;
   readonly department?: Department;

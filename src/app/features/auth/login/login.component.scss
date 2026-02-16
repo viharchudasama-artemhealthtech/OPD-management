@@ -1,10 +1,10 @@
 .login-container {
-  background: #0f172a;
+  background: var(--surface-ground);
   min-height: 100vh;
 }
 
 .branding-section {
-  background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+  background: var(--bg-gradient);
   position: relative;
 
   .medical-pattern {
@@ -17,6 +17,8 @@
   .logo-circle {
     box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
     backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
     transition: transform 0.3s ease;
 
     &:hover {
@@ -26,6 +28,7 @@
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -37,33 +40,34 @@
 }
 
 .form-section {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: #ffffff;
 }
 
 ::ng-deep {
+
   // Input with icon - proper padding
-  .p-input-icon-left > .p-inputtext {
+  .p-input-icon-left>.p-inputtext {
     padding-left: 2.5rem !important;
   }
 
   // Dark theme input styling
   .p-inputtext {
     font-size: 1rem;
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #f1f5f9 !important;
+    background: #ffffff !important;
+    border-color: var(--surface-border) !important;
+    color: var(--text-color) !important;
 
     &::placeholder {
-      color: #64748b !important;
+      color: var(--text-color-secondary) !important;
     }
 
     &:enabled:focus {
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
-      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+      border-color: var(--primary-color) !important;
     }
 
     &:enabled:hover {
-      border-color: #475569 !important;
+      border-color: #cbd5e1 !important;
     }
   }
 
@@ -71,14 +75,14 @@
   .p-password-input {
     width: 100% !important;
     padding-left: 2.5rem !important;
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #f1f5f9 !important;
+    background: #ffffff !important;
+    border-color: var(--surface-border) !important;
+    color: var(--text-color) !important;
   }
 
   .p-password-panel {
-    background: #1e293b !important;
-    border-color: #334155 !important;
+    background: #ffffff !important;
+    border-color: var(--surface-border) !important;
   }
 
   // Button styling
@@ -109,24 +113,24 @@
 
   // Checkbox styling
   .p-checkbox .p-checkbox-box {
-    background: #1e293b;
-    border-color: #334155;
+    background: #ffffff;
+    border-color: var(--surface-border);
 
     &.p-highlight {
-      border-color: #3b82f6;
-      background: #3b82f6;
+      border-color: var(--primary-color);
+      background: var(--primary-color);
     }
 
     &:hover {
-      border-color: #475569;
+      border-color: #cbd5e1;
     }
   }
 
   // Message styling
   .p-message {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #991b1b;
 
     .p-message-icon {
       color: #ef4444;
@@ -135,12 +139,12 @@
 
   // Tooltip styling
   .p-tooltip {
-    background: #1e293b;
-    color: #f1f5f9;
-    border: 1px solid #334155;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
 
     .p-tooltip-arrow {
-      border-top-color: #1e293b;
+      border-top-color: #0f172a;
     }
   }
 }
@@ -183,7 +187,7 @@
       pointer-events: none;
     }
 
-    > div {
+    >div {
       position: relative;
       z-index: 1;
     }
@@ -209,7 +213,7 @@
 
 // Glassmorphism effect
 .surface-card {
-  background: rgba(30, 41, 59, 0.8) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #ffffff !important;
+  border: 1px solid var(--surface-border) !important;
+  box-shadow: var(--soft-shadow) !important;
 }

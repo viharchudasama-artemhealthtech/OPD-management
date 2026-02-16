@@ -1,0 +1,49 @@
+<div class="p-4">
+    <div class="flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-3xl font-bold text-900 m-0">Medical Bills</h1>
+            <p class="text-600 m-0">View and download your invoices</p>
+        </div>
+    </div>
+
+    <p-card styleClass="border-round-xl border-1 border-200 shadow-1">
+        <p-table [value]="bills" [loading]="isLoading" dataKey="id" responsiveLayout="scroll" [rows]="10"
+            [paginator]="true" styleClass="p-datatable-striped">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Bill #</th>
+                    <th>Date</th>
+                    <th>Subtotal</th>
+                    <th>Tax</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th style="width: 5rem"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-bill>
+                <tr>
+                    <td class="font-bold">{{ bill.billNumber }}</td>
+                    <td>{{ bill.createdAt | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ bill.subTotal | currency:'INR' }}</td>
+                    <td>{{ bill.taxAmount | currency:'INR' }}</td>
+                    <td class="text-primary font-bold">{{ bill.totalAmount | currency:'INR' }}</td>
+                    <td>
+                        <p-tag [value]="bill.status" [severity]="getStatusSeverity(bill.status)"></p-tag>
+                    </td>
+                    <td>
+                        <button pButton icon="pi pi-file-pdf" class="p-button-rounded p-button-text p-button-danger"
+                            (click)="downloadInvoice(bill)" pTooltip="Download Invoice"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="text-center p-5">
+                        <i class="pi pi-receipt text-3xl text-300 mb-2 block"></i>
+                        No bills found.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>

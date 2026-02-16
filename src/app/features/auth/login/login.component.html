@@ -1,6 +1,6 @@
-<div class="login-container flex min-h-screen bg-gray-900">
+<div class="login-container flex min-h-screen bg-gray-50">
   <div
-    class="branding-section hidden md:flex flex-column justify-content-between p-8 w-6 lg:w-5 relative overflow-hidden bg-gradient-to-br from-blue-900 to-indigo-900">
+    class="branding-section hidden md:flex flex-column justify-content-between p-8 w-6 lg:w-5 relative overflow-hidden bg-gradient-to-br from-primary-700 to-primary-900">
     <div class="medical-pattern absolute top-0 left-0 w-full h-full opacity-10"></div>
 
     <div class="content relative z-1 text-white">
@@ -8,16 +8,18 @@
         <div
           class="logo-circle bg-white-alpha-20 backdrop-blur border-circle flex align-items-center justify-content-center"
           style="width: 4rem; height: 4rem">
-          <i class="pi pi-building text-3xl text-white"></i>
+          <i class="pi pi-plus-circle text-3xl text-white"></i>
         </div>
         <div>
-          <span class="text-2xl font-bold tracking-tight block">BMC Hospital</span>
-          <span class="text-sm text-white-alpha-70">OPD Management System</span>
+          <span class="text-2xl font-black tracking-tighter block text-white">
+            BMC <span class="text-white-alpha-70">Hospital</span>
+          </span>
+          <span class="text-xs font-bold text-white-alpha-50 uppercase tracking-widest">OPD Management System</span>
         </div>
       </div>
 
       <div class="mt-8 pt-8">
-        <h1 class="text-6xl font-bold mb-4 line-height-2">
+        <h1 class="text-6xl font-black mb-4 line-height-1 tracking-tighter text-white">
           Advanced<br />
           Healthcare<br />
           Management
@@ -29,15 +31,15 @@
 
         <div class="mt-6 flex flex-column gap-3">
           <div class="flex align-items-center gap-2">
-            <i class="pi pi-check-circle text-green-400"></i>
+            <i class="pi pi-check-circle text-white-alpha-40"></i>
             <span class="text-white-alpha-80">Real-time Queue Management</span>
           </div>
           <div class="flex align-items-center gap-2">
-            <i class="pi pi-check-circle text-green-400"></i>
+            <i class="pi pi-check-circle text-white-alpha-40"></i>
             <span class="text-white-alpha-80">Digital Patient Records</span>
           </div>
           <div class="flex align-items-center gap-2">
-            <i class="pi pi-check-circle text-green-400"></i>
+            <i class="pi pi-check-circle text-white-alpha-40"></i>
             <span class="text-white-alpha-80">Appointment Scheduling</span>
           </div>
         </div>
@@ -53,16 +55,15 @@
     </div>
   </div>
 
-  <div class="form-section w-full md:w-6 lg:w-7 flex align-items-center justify-content-center p-4"
-    style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%)">
+  <div class="form-section w-full md:w-6 lg:w-7 flex align-items-center justify-content-center p-4 bg-white">
     <div class="w-full max-w-30rem">
-    
+
       <div class="text-center mb-6 md:hidden">
         <div class="logo-circle bg-blue-600 border-circle flex align-items-center justify-content-center mx-auto mb-3"
           style="width: 3.5rem; height: 3.5rem">
           <i class="pi pi-building text-white text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-bold text-white">BMC Hospital OPD</h1>
+        <h1 class="text-2xl font-bold text-900">BMC Hospital OPD</h1>
       </div>
 
       <div class="surface-card p-4 md:p-6 lg:p-7 shadow-8 border-round-2xl" style="
@@ -70,19 +71,20 @@
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.1);
         ">
-        
+
         <div class="mb-5">
-          <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p class="text-gray-400">Sign in to access your dashboard</p>
+          <h2 class="text-3xl font-bold text-900 mb-2 font-display">Welcome Back</h2>
+          <p class="text-600 font-medium">Sign in to access your dashboard</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-column gap-4" appAutoNext>
           <div class="field">
-            <label for="username" class="font-medium text-white mb-2 block">Username</label>
+            <label for="username"
+              class="font-bold text-900 mb-2 block text-sm uppercase tracking-wider">Username</label>
             <span class="p-input-icon-left w-full">
               <i class="pi pi-user text-gray-400"></i>
               <input pInputText id="username" formControlName="username" type="text" placeholder="Enter your username"
-                autocomplete="username" class="w-full p-3 bg-gray-800 text-white border-gray-700"
+                autocomplete="username" class="w-full p-3 surface-border text-900"
                 [class.p-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" />
             </span>
             <small class="p-error block mt-1"
@@ -93,12 +95,13 @@
 
           <!-- Password Field -->
           <div class="field">
-            <label for="password" class="font-medium text-white mb-2 block">Password</label>
+            <label for="password"
+              class="font-bold text-900 mb-2 block text-sm uppercase tracking-wider">Password</label>
             <span class="p-input-icon-left w-full">
               <i class="pi pi-lock z-2 text-gray-400"></i>
               <p-password id="password" formControlName="password" [feedback]="false" [toggleMask]="true"
                 placeholder="Enter your password" styleClass="w-full" autocomplete="current-password"
-                inputStyleClass="w-full p-3 pl-5 bg-gray-800 text-white border-gray-700"
+                inputStyleClass="w-full p-3 pl-5 surface-border text-900"
                 [class.p-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
               </p-password>
             </span>
@@ -111,10 +114,11 @@
           <!-- Remember Me & Forgot Password -->
           <div class="flex align-items-center justify-content-between mb-2">
             <div class="flex align-items-center gap-2">
-              <p-checkbox [binary]="true" inputId="remember"></p-checkbox>
-              <label for="remember" class="text-gray-300 cursor-pointer text-sm">Remember me</label>
+              <p-checkbox [binary]="true" inputId="remember" styleClass="p-checkbox-sm"></p-checkbox>
+              <label for="remember" class="text-700 cursor-pointer text-sm font-semibold">Remember me</label>
             </div>
-            <a href="#" class="text-blue-400 no-underline hover:underline text-sm font-medium"> Forgot password? </a>
+            <a href="#" class="text-primary no-underline hover:text-primary-dark transition-colors text-sm font-bold">
+              Forgot password? </a>
           </div>
 
           <!-- Error Message -->
@@ -126,32 +130,6 @@
           </p-button>
         </form>
 
-        <!-- Demo Credentials -->
-        <div class="mt-6 pt-4 border-top-1" style="border-color: rgba(255, 255, 255, 0.1)">
-          <div class="text-center">
-            <span class="text-gray-400 font-medium text-sm flex align-items-center justify-content-center gap-2 mb-3">
-              <i class="pi pi-info-circle"></i>
-              Demo Credentials
-            </span>
-            <div class="flex gap-2 justify-content-center flex-wrap">
-              <span class="px-3 py-2 border-round-lg cursor-pointer transition-all text-sm font-medium"
-                style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3)"
-                pTooltip="admin / admin123" tooltipPosition="top">
-                <i class="pi pi-shield mr-1"></i>Admin
-              </span>
-              <span class="px-3 py-2 border-round-lg cursor-pointer transition-all text-sm font-medium"
-                style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3)"
-                pTooltip="doctor / doctor123" tooltipPosition="top">
-                <i class="pi pi-user-plus mr-1"></i>Doctor
-              </span>
-              <span class="px-3 py-2 border-round-lg cursor-pointer transition-all text-sm font-medium"
-                style="background: rgba(251, 146, 60, 0.2); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.3)"
-                pTooltip="recep / recep123" tooltipPosition="top">
-                <i class="pi pi-users mr-1"></i>Receptionist
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Security Notice -->

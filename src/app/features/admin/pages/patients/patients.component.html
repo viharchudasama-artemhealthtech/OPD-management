@@ -1,157 +1,196 @@
-<div class="p-4">
+<div class="patient-registry-page p-4 bg-50 min-h-screen">
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
 
-  <!-- Header -->
-  <div class="flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="text-3xl font-bold text-900 m-0">All Patients</h1>
-      <p class="text-500 m-0">Manage and monitor all patients in the system.</p>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div
+      class="flex flex-column md:flex-row justify-content-between align-items-start md:align-items-center mb-5 gap-3">
+      <div>
+        <h1 class="text-4xl font-black text-900 m-0 tracking-tight">Main Registry</h1>
+        <p class="text-600 m-0 font-medium">Global patient records and medical archival system</p>
+      </div>
+      <div class="flex gap-2">
+        <button pButton label="Export CSV" icon="pi pi-file-excel"
+          class="p-button-secondary font-bold px-4 py-3 border-round-lg shadow-sm" (click)="exportCSV()"></button>
+        <button pButton label="Initialize Patient" icon="pi pi-plus"
+          class="p-button-primary font-bold shadow-2 px-4 py-3 border-round-lg"
+          routerLink="/receptionist/registration"></button>
+      </div>
     </div>
-    <div class="flex gap-2">
-      <button pButton label="Export" icon="pi pi-download" class="p-button-secondary" (click)="exportCSV()"></button>
-      <button pButton label="Add Patient" icon="pi pi-plus" class="p-button-primary"></button>
+
+    <!-- Registry Table -->
+    <div class="surface-card shadow-3 border-round-xl border-1 surface-border overflow-hidden">
+      <!-- Table Filter Header -->
+      <div
+        class="p-4 bg-white border-bottom-1 surface-border flex flex-column md:flex-row justify-content-between align-items-center gap-3">
+        <span class="p-input-icon-left w-full md:w-30rem">
+          <i class="pi pi-search text-500"></i>
+          <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal(searchValue, 'contains')"
+            placeholder="Search by name, patient ID, or contact..." class="w-full professional-input h-3rem" />
+        </span>
+        <div class="flex align-items-center gap-3">
+          <span class="text-sm text-500 font-bold">Filters:</span>
+          <p-dropdown [options]="[{ label: 'All Records', value: null }, { label: 'Active', value: 'active' }]"
+            placeholder="Status" styleClass="w-10rem professional-input"></p-dropdown>
+          <p-dropdown
+            [options]="[{ label: 'All Genders', value: null }, { label: 'Male', value: 'Male' }, { label: 'Female', value: 'Female' }]"
+            placeholder="Gender" styleClass="w-10rem professional-input"></p-dropdown>
+        </div>
+      </div>
+
+      <p-table #dt [value]="patients" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
+        responsiveLayout="stack" breakpoint="960px" styleClass="p-datatable-professional">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest pl-4"
+              pSortableColumn="fullName">Patient Identity <p-sortIcon field="fullName"></p-sortIcon></th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest"
+              pSortableColumn="id">Record ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-center"
+              pSortableColumn="phone">Access Contact <p-sortIcon field="phone"></p-sortIcon></th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-center">
+              Demographics</th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-right pr-4">
+              Operations</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-patient>
+          <tr class="hover:bg-50 transition-colors">
+            <td class="pl-4 py-3">
+              <div class="flex align-items-center gap-3">
+                <p-avatar [label]="getInitials(patient.fullName)" shape="circle" size="large"
+                  styleClass="font-bold bg-blue-50 text-blue-700"></p-avatar>
+                <div class="flex flex-column">
+                  <span class="text-900 font-bold text-sm">{{ patient.fullName }}</span>
+                  <span class="text-500 text-xs font-medium">{{ patient.email || 'No email registered' }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-xs font-bold font-mono px-2 py-1 bg-gray-100 text-700 border-round">{{ patient.id
+                }}</span>
+            </td>
+            <td class="text-center">
+              <span class="text-700 font-medium text-sm">{{ patient.phone | phone }}</span>
+            </td>
+            <td class="text-center">
+              <div class="flex flex-column align-items-center gap-1">
+                <span class="text-xs font-black text-900">{{ patient.age }} Years</span>
+                <div class="flex align-items-center gap-1 text-500 text-xs">
+                  <i [class]="patient.gender | genderIcon"></i>
+                  <span>{{ patient.gender }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="text-right pr-4">
+              <div class="flex justify-content-end gap-1">
+                <button pButton icon="pi pi-eye" class="p-button-text p-button-rounded p-button-secondary"
+                  (click)="viewPatient(patient)" title="View Full Profile"></button>
+                <button pButton icon="pi pi-history" class="p-button-text p-button-rounded p-button-secondary"
+                  title="Visit History"></button>
+                <button pButton icon="pi pi-trash"
+                  class="p-button-text p-button-rounded p-button-danger opacity-50 hover:opacity-100"
+                  (click)="deletePatient(patient)" title="Archive Record"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="py-10 text-center">
+              <div class="flex flex-column align-items-center">
+                <i class="pi pi-id-card text-4xl text-300 mb-3"></i>
+                <p class="text-500 font-bold m-0">No patient records synchronized</p>
+                <p class="text-400 text-xs mt-1">Initialize patients via the registration portal or clear active
+                  filters.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
   </div>
 
-  <!-- Search & Filter -->
-  <div class="mb-4">
-    <p-card>
+  <!-- Medical Record Detail Dialog -->
+  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{ width: '700px' }"
+    [header]="selectedPatient ? 'Patient Dossier' : 'No Record Selected'" (onHide)="closeDialog()"
+    styleClass="professional-dialog patient-dialog" [draggable]="false" [resizable]="false">
+    <div *ngIf="selectedPatient">
+      <!-- Header Meta -->
+      <div class="flex align-items-center gap-4 mb-6 pb-5 border-bottom-1 surface-border">
+        <p-avatar [label]="getInitials(selectedPatient.fullName)" shape="circle" size="xlarge"
+          styleClass="font-black bg-primary-100 text-primary-700"
+          [style]="{ width: '80px', height: '80px', 'font-size': '2rem' }"></p-avatar>
+        <div>
+          <h2 class="m-0 text-3xl font-black text-900">{{ selectedPatient.fullName }}</h2>
+          <div class="flex align-items-center gap-3 mt-2">
+            <span class="text-sm font-bold text-500 tracking-widest uppercase">ID: {{ selectedPatient.id }}</span>
+            <p-tag [value]="'REGULAR'" severity="info" styleClass="text-xs"></p-tag>
+          </div>
+        </div>
+      </div>
+
       <div class="grid">
         <div class="col-12 md:col-6">
-          <span class="p-input-icon-left w-full">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" placeholder="Search by name, phone, or ID..." [(ngModel)]="searchValue"
-              class="w-full" />
-          </span>
+          <h4 class="text-xs font-black text-500 uppercase tracking-widest mb-3">Core Information</h4>
+          <div class="flex flex-column gap-3">
+            <div class="flex justify-content-between p-2 surface-50 border-round-lg">
+              <span class="text-xs font-bold text-600">Gender / Age</span>
+              <span class="text-sm font-black text-900">{{ selectedPatient.gender }} / {{ selectedPatient.age }}Y</span>
+            </div>
+            <div class="flex justify-content-between p-2 surface-50 border-round-lg">
+              <span class="text-xs font-bold text-600">Contact Number</span>
+              <span class="text-sm font-black text-900">{{ selectedPatient.phone | phone }}</span>
+            </div>
+            <div class="flex justify-content-between p-2 surface-50 border-round-lg">
+              <span class="text-xs font-bold text-600">Email Reference</span>
+              <span class="text-sm font-black text-900">{{ selectedPatient.email || 'N/A' }}</span>
+            </div>
+          </div>
         </div>
+
         <div class="col-12 md:col-6">
-          <p-dropdown [options]="[
-              { label: 'All Patients', value: null },
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-            ]" placeholder="Select Status" class="w-full"></p-dropdown>
+          <h4 class="text-xs font-black text-500 uppercase tracking-widest mb-3">Clinical Metrics</h4>
+          <div class="flex flex-column gap-3">
+            <div class="flex justify-content-between p-2 surface-50 border-round-lg">
+              <span class="text-xs font-bold text-600">Blood Group</span>
+              <span class="text-sm font-black text-red-600">{{ selectedPatient.bloodGroup || 'N/A' }}</span>
+            </div>
+            <div class="flex justify-content-between p-2 surface-50 border-round-lg">
+              <span class="text-xs font-bold text-600">Registration Date</span>
+              <span class="text-sm font-black text-900">{{ selectedPatient.createdAt | date: 'dd MMM yyyy' }}</span>
+            </div>
+            <div
+              class="flex justify-content-between p-2 surface-50 border-round-lg border-1 border-primary-100 bg-primary-50">
+              <span class="text-xs font-bold text-primary-700">Loyalty Status</span>
+              <span class="text-sm font-black text-primary-900 line-height-1">Premium Patient</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </p-card>
-  </div>
 
-  <!-- Patients Table -->
-  <p-card>
-    <p-table #dt [value]="patients" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20, 50]"
-      [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-striped">
-      <ng-template pTemplate="header">
-        <tr>
-          <th colspan="8">
-            <span class="p-input-icon-left w-full">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal(searchValue, 'contains')"
-                placeholder="Search patients..." class="w-full" />
-            </span>
-          </th>
-        </tr>
-        <tr>
-          <th pSortableColumn="id">Patient ID <p-sortIcon field="id"></p-sortIcon></th>
-          <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-          <th pSortableColumn="dob">DOB <p-sortIcon field="dob"></p-sortIcon></th>
-          <th pSortableColumn="contact">Contact <p-sortIcon field="contact"></p-sortIcon></th>
-          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-          <th pSortableColumn="gender">Gender <p-sortIcon field="gender"></p-sortIcon></th>
-          <th pSortableColumn="bloodGroup">Blood Group <p-sortIcon field="bloodGroup"></p-sortIcon></th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
+        <div class="col-12 mt-4">
+          <h4 class="text-xs font-black text-500 uppercase tracking-widest mb-3">Residential Integrity</h4>
+          <div class="p-3 surface-50 border-round-lg border-1 surface-border">
+            <div class="flex align-items-start gap-2">
+              <i class="pi pi-map-marker mt-1 text-primary"></i>
+              <p class="m-0 text-sm font-medium text-800 line-height-3">{{ selectedPatient.address || 'No residential
+                address verified on record.' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <ng-template pTemplate="body" let-patient>
-        <tr>
-          <td>
-            <span class="font-mono font-bold">{{ patient.id }}</span>
-          </td>
-          <td>{{ patient.name }}</td>
-          <td>{{ patient.dob | date: 'short' }} ({{ patient.dob | age }})</td>
-          <td>{{ patient.contact | phone }}</td>
-          <td>{{ patient.email || '-' }}</td>
-          <td><i [class]="patient.gender | genderIcon"></i> {{ patient.gender || '-' }}</td>
-          <td>
-            <p-tag [value]="patient.bloodGroup || 'N/A'" severity="info"></p-tag>
-          </td>
-          <td>
-            <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="viewPatient(patient)" title="View"></button>
-            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm"
-              (click)="deletePatient(patient)" title="Delete"></button>
-          </td>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="8" class="text-center p-4">
-            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
-            <p class="text-500">No patients found.</p>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
-
-  <!-- Patient Detail Dialog -->
-  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{ width: '50vw' }" header="Patient Details"
-    [maximizable]="true" (onHide)="closeDialog()">
-    <div *ngIf="selectedPatient" class="grid">
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Patient ID</label>
-          <span class="text-900 font-medium">{{ selectedPatient.id }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Full Name</label>
-          <span class="text-900 font-medium">{{ selectedPatient.fullName }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Phone</label>
-          <span class="text-900 font-medium">{{ selectedPatient.phone | phone }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Email</label>
-          <span class="text-900 font-medium">{{ selectedPatient.email || 'N/A' }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Gender</label>
-          <span class="text-900 font-medium"><i [class]="selectedPatient.gender | genderIcon"></i> {{
-            selectedPatient.gender || 'N/A' }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Age</label>
-          <span class="text-900 font-medium">{{ selectedPatient.age | age }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Blood Group</label>
-          <span class="text-900 font-medium">{{ selectedPatient.bloodGroup || 'N/A' }}</span>
-        </div>
-      </div>
-      <div class="col-12 md:col-6">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Registered At</label>
-          <span class="text-900 font-medium">{{ selectedPatient.createdAt | date: 'medium' }}</span>
-        </div>
-      </div>
-      <div class="col-12">
-        <div class="mb-3">
-          <label class="block text-500 font-medium mb-2">Address</label>
-          <span class="text-900 font-medium">{{ selectedPatient.address || 'N/A' }}</span>
+      <div class="flex justify-content-between align-items-center mt-6 pt-4 border-top-1 surface-border">
+        <p-button label="Medical History" icon="pi pi-briefcase" [outlined]="true"
+          styleClass="font-bold border-round-lg"></p-button>
+        <div class="flex gap-3">
+          <p-button label="Close Dossier" (click)="closeDialog()" [text]="true"
+            styleClass="font-bold text-700"></p-button>
+          <p-button label="Authorize Edit" icon="pi pi-user-edit"
+            styleClass="font-bold border-round-lg shadow-2"></p-button>
         </div>
       </div>
     </div>

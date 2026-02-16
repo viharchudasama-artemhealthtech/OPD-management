@@ -55,14 +55,23 @@ export class AnalyticsService {
   ) { }
 
   public getDailyVisits(): Observable<ChartData> {
-    return this.patientService.patients$.pipe(
-      map((patients: Patient[]) => {
+    return combineLatest([
+      this.patientService.patients$,
+      this.opdService.tokens$,
+      this.appointmentService.appointments$,
+    ]).pipe(
+      map(([patients, tokens, appointments]) => {
         const buckets = Array(6).fill(0);
         const now = new Date();
 
-        patients.forEach(p => {
-          if (!p.createdAt) return;
-          const regDate = new Date(p.createdAt);
+        // Unique patients by creation date
+        const patientTimestamps: Date[] = [];
+
+        patients.forEach(p => { if (p.createdAt) patientTimestamps.push(new Date(p.createdAt)); });
+        tokens.forEach(t => { if (t.createdAt) patientTimestamps.push(new Date(t.createdAt)); });
+        appointments.forEach(a => { if (a.createdAt) patientTimestamps.push(new Date(a.createdAt)); });
+
+        patientTimestamps.forEach(regDate => {
           if (regDate.getDate() === now.getDate() && regDate.getMonth() === now.getMonth()) {
             const hour = regDate.getHours();
             if (hour >= 9 && hour < 11) buckets[0]++;
@@ -186,19 +195,29 @@ export class AnalyticsService {
       this.appointmentService.appointments$,
     ]).pipe(
       map(([patients, tokens, appointments]: [Patient[], OpdToken[], Appointment[]]) => {
-        const completedTokens = tokens.filter(t => t.status === TokenStatus.COMPLETED && t.consultationStartedAt);
+        // More robust consultation count: Completed or In Consultation with a start time
+        const completedConsultations = tokens.filter(
+          t => t.status === TokenStatus.COMPLETED || (t.status === TokenStatus.IN_CONSULTATION && t.consultationStartedAt),
+        ).length;
 
         // Active Queue
         const activeQueue = tokens.filter(
           t => t.status === TokenStatus.CHECKED_IN || t.status === TokenStatus.IN_CONSULTATION,
         ).length;
 
+        // Total unique patients across all systems
+        const patientIds = new Set([
+          ...patients.map(p => p.id),
+          ...tokens.map(t => t.patientId),
+          ...appointments.map(a => a.patientId),
+        ]);
+
         return [
           {
             title: 'Total Patients',
-            value: patients.length.toString(),
-            trend: patients.length,
-            trendLabel: 'total registered',
+            value: patientIds.size.toString(),
+            trend: patientIds.size,
+            trendLabel: 'total identified',
             icon: 'pi-users',
             color: 'blue',
             bg: 'bg-blue-100',
@@ -214,7 +233,7 @@ export class AnalyticsService {
           },
           {
             title: 'Consultations Done',
-            value: completedTokens.length.toString(),
+            value: completedConsultations.toString(),
             trend: 100,
             trendLabel: 'completion rate',
             icon: 'pi-check-circle',

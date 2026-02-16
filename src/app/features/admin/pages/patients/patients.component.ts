@@ -10,6 +10,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { AvatarModule } from 'primeng/avatar';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
@@ -33,6 +34,7 @@ import { UserStatus } from '../../../../core/models/enums/user-status.enum';
     TagModule,
     ConfirmDialogModule,
     ToastModule,
+    AvatarModule,
     AgePipe,
     PhonePipe,
     GenderIconPipe
@@ -120,5 +122,9 @@ export class PatientsComponent implements OnInit {
       default:
         return 'info';
     }
+  }
+
+  getInitials(name: string): string {
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
   }
 }

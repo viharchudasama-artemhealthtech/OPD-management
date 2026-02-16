@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +17,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { OpdToken } from '../../../../core/models/opd.model';
 import { TokenStatus } from '../../../../core/models/enums/token-status.enum';
 import { Priority } from '../../../../core/models/enums/priority.enum';
+import { RouterModule } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap, filter, tap } from 'rxjs/operators';
 
@@ -36,6 +38,7 @@ import { ErrorHandlerService } from '../../../../core/services/error-handler.ser
     DropdownModule,
     FormsModule,
     TooltipModule,
+    RouterModule,
   ],
   templateUrl: './doctor-queue.component.html',
   styleUrls: ['./doctor-queue.component.scss'],
@@ -69,6 +72,7 @@ export class DoctorQueueComponent implements OnInit {
     private readonly opdService: OpdService,
     private readonly appointmentService: AppointmentService,
     private readonly authService: AuthService,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -91,7 +95,8 @@ export class DoctorQueueComponent implements OnInit {
   callNext(token: OpdToken): void {
     if (this.currentToken) return; // Guard for concurrency
     this.opdService.updateTokenStatus(token.id, TokenStatus.IN_CONSULTATION);
-    this.currentToken = token;
+    this.currentToken = { ...token, status: TokenStatus.IN_CONSULTATION };
+    this.router.navigate(['/doctor/consultation', token.id], { queryParams: { patientId: token.patientId } });
   }
 
   completeConsultation(): void {
@@ -115,16 +120,23 @@ export class DoctorQueueComponent implements OnInit {
     this.showConsultationDialog = true;
   }
 
-  getStatusSeverity(status: TokenStatus): 'success' | 'info' | 'warning' | 'danger' {
+  public getStatusSeverity(status: TokenStatus): string {
     switch (status) {
-      case TokenStatus.CHECKED_IN:
-        return 'warning';
-      case TokenStatus.IN_CONSULTATION:
-        return 'info';
-      case TokenStatus.COMPLETED:
-        return 'success';
-      default:
-        return 'danger';
+      case TokenStatus.CHECKED_IN: return 'success';
+      case TokenStatus.IN_CONSULTATION: return 'warning';
+      case TokenStatus.COMPLETED: return 'success';
+      case TokenStatus.CANCELLED: return 'danger';
+      default: return 'info';
+    }
+  }
+
+  public getStatusColor(status: TokenStatus): string {
+    switch (status) {
+      case TokenStatus.CHECKED_IN: return '#22c55e';
+      case TokenStatus.IN_CONSULTATION: return '#f59e0b';
+      case TokenStatus.COMPLETED: return '#10b981';
+      case TokenStatus.CANCELLED: return '#ef4444';
+      default: return '#94a3b8';
     }
   }
 

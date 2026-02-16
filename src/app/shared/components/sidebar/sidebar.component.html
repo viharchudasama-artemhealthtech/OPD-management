@@ -1,49 +1,59 @@
-<aside class="app-sidebar shadow-2" [class.collapsed]="isCollapsed">
+<aside class="app-sidebar shadow-2 transition-all duration-300" [class.collapsed]="isCollapsed">
   <!-- Branding Section -->
-  <div class="sidebar-header flex align-items-center justify-content-center p-4">
-    <div class="logo-container flex align-items-center gap-2">
-      <i class="pi pi-building text-primary text-3xl"></i>
+  <div
+    class="sidebar-header flex align-items-center justify-content-center p-4 border-bottom-1 surface-border bg-white">
+    <div class="logo-container flex align-items-center gap-3">
+      <div
+        class="w-2.5rem h-2.5rem bg-primary-50 border-round-lg flex align-items-center justify-content-center shadow-1">
+        <i class="pi pi-plus-circle text-primary text-xl"></i>
+      </div>
       @if (!isCollapsed) {
-        <span class="logo-text font-bold text-xl tracking-tight text-900"
-          >OPD<span class="text-primary">Sync</span></span
-        >
+      <div class="flex flex-column">
+        <span class="logo-text font-black text-xl tracking-tighter text-900 leading-tight">
+          BMC <span class="text-primary">Hospital</span>
+        </span>
+      </div>
       }
     </div>
   </div>
 
   <!-- Navigation Menu -->
-  <div class="sidebar-menu flex-grow-1 overflow-y-auto px-3">
-    <div class="menu-items flex flex-column gap-2">
-      @for (item of filteredMenu; track item.route) {
-        <div
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          class="menu-item p-3 border-round-xl transition-all p-ripple"
-          pRipple
-          [pTooltip]="isCollapsed ? item.label : ''"
-          tooltipPosition="right"
-        >
-          <i [class]="item.icon + ' text-xl'"></i>
-          @if (!isCollapsed) {
-            <span class="label font-medium ml-3">{{ item.label }}</span>
+  <div class="sidebar-menu flex-grow-1 overflow-y-auto pt-4 px-3 custom-scrollbar">
+    <div class="menu-sections flex flex-column gap-4">
+      @for (group of groups; track group) {
+      @if (getItemsByGroup(group).length > 0) {
+      <div class="menu-group">
+        @if (!isCollapsed) {
+        <div class="group-label text-xs font-black text-400 uppercase tracking-widest px-3 mb-2">
+          {{ group }}
+        </div>
+        }
+        <div class="group-items flex flex-column gap-1">
+          @for (item of getItemsByGroup(group); track item.route) {
+          <div [routerLink]="item.route" routerLinkActive="active"
+            class="menu-item p-3 border-round-xl transition-all p-ripple flex align-items-center" pRipple
+            [pTooltip]="isCollapsed ? item.label : ''" tooltipPosition="right">
+            <i [class]="item.icon + ' text-xl'"></i>
+            @if (!isCollapsed) {
+            <span class="label font-bold ml-3 text-sm">{{ item.label }}</span>
+            }
+          </div>
           }
         </div>
+      </div>
+      }
       }
     </div>
   </div>
 
   <!-- Sidebar Footer -->
-  <div class="sidebar-footer p-3 border-top-1 surface-border">
+  <div class="sidebar-footer p-3 border-top-1 surface-border bg-white">
     <div
-      class="menu-item p-3 border-round-xl transition-all p-ripple text-danger hover:surface-100"
-      pRipple
-      (click)="logout()"
-      [pTooltip]="isCollapsed ? 'Logout' : ''"
-      tooltipPosition="right"
-    >
-      <i class="pi pi-sign-out text-xl"></i>
+      class="menu-item p-3 border-round-xl transition-all p-ripple text-red-600 hover:bg-red-50 flex align-items-center"
+      pRipple (click)="logout()" [pTooltip]="isCollapsed ? 'Terminate Session' : ''" tooltipPosition="right">
+      <i class="pi pi-power-off text-xl font-bold"></i>
       @if (!isCollapsed) {
-        <span class="label font-medium ml-3">Logout</span>
+      <span class="label font-bold ml-3 text-sm">Terminate Session</span>
       }
     </div>
   </div>

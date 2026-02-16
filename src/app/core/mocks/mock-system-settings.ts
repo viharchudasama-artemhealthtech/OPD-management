@@ -2,7 +2,7 @@ import { SystemSettings } from '../models/system-settings.model';
 
 export const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
     general: {
-        systemName: 'OPD Management System',
+        systemName: 'BMC Hospital',
         systemUrl: 'http://localhost:4200',
         timezone: 'Asia/Kolkata',
         systemEmail: 'admin@opd.local',

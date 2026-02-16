@@ -3,6 +3,8 @@
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  background-color: #f8fafc;
+  /* Professional slate bg */
 }
 
 .main-container {
@@ -10,19 +12,38 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: var(--surface-ground);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 1.5rem 2.5rem;
+  /* Increased horizontal padding for premium feel */
+  scroll-behavior: smooth;
+
+  /* High-density medical grid background (v. subtle) */
+  background-image: radial-gradient(var(--surface-border) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 .content-wrapper {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {

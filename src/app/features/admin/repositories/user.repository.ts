@@ -51,12 +51,22 @@ export class UserRepository {
                 changed = true;
             } else {
                 const existing = updatedUsers[existingIndex];
-                // Sync important fields like department or role if missing/changed in mocks
-                if ((mockUser.department && !existing.department) || (mockUser.fullName !== existing.fullName)) {
+                // Sync important fields if missing/changed in mocks
+                const hasChanged =
+                    (mockUser.department && !existing.department) ||
+                    (mockUser.fullName !== existing.fullName) ||
+                    (mockUser.phone !== existing.phone) ||
+                    (mockUser.age !== existing.age) ||
+                    (mockUser.gender !== existing.gender);
+
+                if (hasChanged) {
                     updatedUsers[existingIndex] = {
                         ...existing,
                         department: mockUser.department || existing.department,
-                        fullName: mockUser.fullName
+                        fullName: mockUser.fullName,
+                        phone: mockUser.phone || existing.phone,
+                        age: mockUser.age || existing.age,
+                        gender: mockUser.gender || existing.gender
                     };
                     changed = true;
                 }

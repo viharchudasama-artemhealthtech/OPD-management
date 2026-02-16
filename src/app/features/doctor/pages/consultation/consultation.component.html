@@ -1,0 +1,203 @@
+<div class="consultation-page p-4 bg-50 min-h-screen">
+    <p-toast></p-toast>
+
+    @if (isLoading) {
+    <div class="flex justify-content-center align-items-center h-30rem">
+        <div class="flex flex-column align-items-center gap-3">
+            <i class="pi pi-spin pi-spinner text-primary text-5xl"></i>
+            <span class="text-600 font-semibold">Loading clinical data...</span>
+        </div>
+    </div>
+    } @else if (!patient) {
+    <div class="flex flex-column align-items-center justify-content-center h-30rem">
+        <i class="pi pi-exclamation-triangle text-red-500 text-6xl mb-4"></i>
+        <h2 class="text-900 font-bold m-0 mb-2">Record Not Found</h2>
+        <p class="text-600 max-w-20rem text-center mb-5">Could not retrieve patient data for this token.</p>
+        <p-button label="Back to Queue" icon="pi pi-arrow-left" styleClass="p-button-outlined"
+            (onClick)="onCancel()"></p-button>
+    </div>
+    } @else {
+    <div class="max-w-7xl mx-auto">
+        <!-- Simplified Header -->
+        <div
+            class="flex flex-column md:flex-row justify-content-between align-items-start gap-4 mb-5 pb-4 border-bottom-1 surface-border">
+            <div class="flex align-items-center gap-4">
+                <div
+                    class="w-4rem h-4rem bg-primary-50 border-round-circle flex align-items-center justify-content-center">
+                    <i class="pi pi-user text-primary text-2xl"></i>
+                </div>
+                <div>
+                    <div class="flex align-items-center gap-2 mb-1">
+                        <span class="text-xs font-bold text-primary uppercase">Token #{{ tokenId }}</span>
+                        <span class="text-xs text-500">| Consultation</span>
+                    </div>
+                    <h1 class="text-3xl font-bold text-900 m-0">{{ patient.fullName }}</h1>
+                    <div class="flex gap-3 mt-1 text-600 text-sm">
+                        <span>{{ patient.age }}Y / {{ patient.gender }}</span>
+                        <span>{{ patient.phone }}</span>
+                        @if (patient.bloodGroup) {
+                        <span class="text-primary font-bold">{{ patient.bloodGroup }}</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <p-button label="History" icon="pi pi-history"
+                    styleClass="p-button-text p-button-secondary font-semibold p-button-sm"></p-button>
+                <p-button label="Back" icon="pi pi-arrow-left" styleClass="p-button-text font-semibold p-button-sm"
+                    (onClick)="onCancel()"></p-button>
+            </div>
+        </div>
+
+        <!-- simplified Vitals -->
+        <div class="flex flex-wrap gap-4 mb-5">
+            @if (vitals) {
+            <div class="flex flex-column gap-1 pr-4 border-right-1 surface-border">
+                <span class="text-xs font-bold text-500 uppercase">Temp</span>
+                <span class="text-lg font-bold">{{ vitals.temperature }}°F</span>
+            </div>
+            <div class="flex flex-column gap-1 pr-4 border-right-1 surface-border">
+                <span class="text-xs font-bold text-500 uppercase">Pulse</span>
+                <span class="text-lg font-bold text-red-600">{{ vitals.pulse }} BPM</span>
+            </div>
+            <div class="flex flex-column gap-1 pr-4 border-right-1 surface-border">
+                <span class="text-xs font-bold text-500 uppercase">BP</span>
+                <span class="text-lg font-bold">{{ vitals.bloodPressure?.systolic }}/{{ vitals.bloodPressure?.diastolic
+                    }}</span>
+            </div>
+            <div class="flex flex-column gap-1 pr-4 border-right-1 surface-border">
+                <span class="text-xs font-bold text-500 uppercase">Oxygen</span>
+                <span class="text-lg font-bold">{{ vitals.spo2 }}%</span>
+            </div>
+            <div class="flex flex-column gap-1">
+                <span class="text-xs font-bold text-500 uppercase">Weight</span>
+                <span class="text-lg font-bold">{{ vitals.weight }} KG</span>
+            </div>
+            <div class="ml-auto flex align-items-center">
+                <p-button icon="pi pi-pencil" label="Edit Vitals"
+                    styleClass="p-button-text p-button-sm font-semibold p-2" (onClick)="openVitalsDialog()"></p-button>
+            </div>
+            } @else {
+            <div class="w-full bg-orange-50 p-3 border-round flex align-items-center justify-content-between">
+                <span class="text-orange-700 font-bold text-sm">Patient vitals not recorded yet.</span>
+                <p-button label="Record Vitals" icon="pi pi-plus" styleClass="p-button-sm p-button-warning"
+                    (onClick)="openVitalsDialog()"></p-button>
+            </div>
+            }
+        </div>
+
+        <!-- Workspace -->
+        <form [formGroup]="consultationForm" (ngSubmit)="onSubmit()">
+            <div class="grid">
+                <div class="col-12 lg:col-5">
+                    <p-card styleClass="shadow-2 border-round-xl">
+                        <ng-template pTemplate="title">
+                            <span class="text-lg font-bold">Assessment</span>
+                        </ng-template>
+                        <div class="flex flex-column gap-4">
+                            <div class="field">
+                                <label class="block font-semibold text-sm mb-2">Chief Complaints</label>
+                                <textarea pInputTextarea formControlName="complaints" rows="3" class="w-full"
+                                    placeholder="Describe symptoms..."></textarea>
+                            </div>
+
+                            <div class="field">
+                                <label class="block font-semibold text-sm mb-2">Diagnosis</label>
+                                <p-autoComplete formControlName="diagnosis" [suggestions]="filteredIcdSuggestions"
+                                    (completeMethod)="searchIcd($event)" field="value" [minLength]="1"
+                                    styleClass="w-full" inputStyleClass="w-full bg-50 font-bold p-3"
+                                    placeholder="Search diagnosis..." appendTo="body">
+                                </p-autoComplete>
+                            </div>
+
+                            <div class="field">
+                                <label class="block font-semibold text-sm mb-2">Clinical Notes</label>
+                                <textarea pInputTextarea formControlName="history" rows="3" class="w-full"
+                                    placeholder="Additional observations..."></textarea>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+
+                <div class="col-12 lg:col-7">
+                    <p-card styleClass="shadow-2 border-round-xl">
+                        <ng-template pTemplate="header">
+                            <div class="flex justify-content-between align-items-center p-4 pb-0">
+                                <span class="text-lg font-bold">Prescription</span>
+                                <p-button label="Add" icon="pi pi-plus" styleClass="p-button-text p-button-sm"
+                                    (onClick)="addMedicine()"></p-button>
+                            </div>
+                        </ng-template>
+
+                        <p-table [value]="medicines.controls" class="p-datatable-sm">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th style="width: 80px">Dosage</th>
+                                    <th style="width: 100px">Freq</th>
+                                    <th style="width: 80px">Days</th>
+                                    <th style="width: 120px">Timing</th>
+                                    <th style="width: 40px"></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-medicine let-i="rowIndex">
+                                <tr [formGroupName]="i">
+                                    <td><input pInputText formControlName="medicineName" class="w-full p-2" /></td>
+                                    <td><input pInputText formControlName="dosage" class="w-full p-2 text-center" />
+                                    </td>
+                                    <td><input pInputText formControlName="frequency" class="w-full p-2 text-center" />
+                                    </td>
+                                    <td><input pInputText formControlName="duration" class="w-full p-2 text-center" />
+                                    </td>
+                                    <td><p-dropdown [options]="timingOptions" formControlName="timing" appendTo="body"
+                                            styleClass="w-full p-0"></p-dropdown></td>
+                                    <td><button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-1"
+                                            (click)="removeMedicine(i)"></button></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <div class="mt-4">
+                            <label class="block font-semibold text-sm mb-2">Treatment Plan</label>
+                            <textarea pInputTextarea formControlName="plan" rows="3" class="w-full"
+                                placeholder="Patient instructions..."></textarea>
+                        </div>
+                    </p-card>
+
+                    <div class="flex justify-content-end gap-2 mt-5">
+                        <p-button label="Cancel" styleClass="p-button-text" (onClick)="onCancel()"></p-button>
+                        <p-button type="submit" label="Complete Visit" icon="pi pi-check" styleClass="px-5"
+                            [disabled]="consultationForm.invalid || !patient"></p-button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    }
+
+    <p-dialog [(visible)]="displayVitalsDialog" header="Patient Vitals" [modal]="true" [style]="{width: '400px'}">
+        <form [formGroup]="vitalsForm" (ngSubmit)="saveVitals()" class="p-3">
+            <div class="grid">
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Temp (°F)</label><p-inputNumber
+                        formControlName="temperature" mode="decimal" [minFractionDigits]="1"
+                        styleClass="w-full"></p-inputNumber></div>
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Pulse (BPM)</label><p-inputNumber
+                        formControlName="pulse" styleClass="w-full"></p-inputNumber></div>
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Sys BP</label><p-inputNumber
+                        formControlName="systolic" styleClass="w-full"></p-inputNumber></div>
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Dia BP</label><p-inputNumber
+                        formControlName="diastolic" styleClass="w-full"></p-inputNumber></div>
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">SPO2 (%)</label><p-inputNumber
+                        formControlName="spo2" styleClass="w-full"></p-inputNumber></div>
+                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Weight (KG)</label><p-inputNumber
+                        formControlName="weight" mode="decimal" [minFractionDigits]="1"
+                        styleClass="w-full"></p-inputNumber></div>
+            </div>
+            <div class="flex justify-content-end gap-2 mt-4">
+                <p-button label="Cancel" (onClick)="displayVitalsDialog = false" styleClass="p-button-text"></p-button>
+                <p-button label="Save" icon="pi pi-check" type="submit"></p-button>
+            </div>
+        </form>
+    </p-dialog>
+</div>

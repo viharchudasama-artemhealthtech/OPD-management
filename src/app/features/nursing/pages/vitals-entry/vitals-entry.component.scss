@@ -1,0 +1,16 @@
+.vitals-entry-container {
+  margin: 0 auto;
+
+  .patient-info {
+    background-color: var(--surface-ground);
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--surface-100);
+    }
+  }
+
+  .field {
+    margin-bottom: 1.5rem;
+  }
+}

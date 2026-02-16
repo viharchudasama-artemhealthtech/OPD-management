@@ -1,21 +1,70 @@
-::ng-deep .p-datatable-striped tbody > tr:nth-child(odd) {
-  background-color: var(--surface-50);
+.patient-registry-page {
+  .p-datatable-professional {
+    .p-datatable-thead>tr>th {
+      padding: 1.5rem 1rem;
+      border-top: none !important;
+    }
+
+    .p-datatable-tbody>tr>td {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #f1f5f9 !important;
+    }
+  }
+
+  .professional-input {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+
+    &:focus {
+      background: white !important;
+      border-color: var(--primary-color) !important;
+      box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.1) !important;
+    }
+  }
+
+  .py-10 {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .line-height-3 {
+    line-height: 1.5;
+  }
 }
 
-::ng-deep .font-mono {
-  font-family: 'Courier New', monospace;
-}
+:host ::ng-deep {
+  .professional-dialog {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-::ng-deep .text-primary {
-  color: var(--primary-color);
-}
+    .p-dialog-header {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #0f172a;
 
-::ng-deep .w-full {
-  width: 100%;
-}
+      .p-dialog-title {
+        font-weight: 800;
+        font-size: 1.25rem;
+        letter-spacing: -0.025em;
+      }
+    }
 
-::ng-deep .gap-2 {
-  gap: 0.5rem;
+    .p-dialog-content {
+      padding: 2.5rem;
+      background: white;
+    }
+  }
+
+  .professional-input {
+    .p-dropdown {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+  }
 }
 
 ::ng-deep .mb-4 {

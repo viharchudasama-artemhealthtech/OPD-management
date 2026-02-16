@@ -56,6 +56,104 @@
   }
 }
 
+.app-header {
+  height: 80px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.professional-header-input {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:focus {
+    background: white !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.1) !important;
+    width: 110% !important;
+    /* Subtle expansion on focus */
+  }
+}
+
+.search-hint {
+  pointer-events: none;
+  background: white;
+  color: #94a3b8;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: .5;
+    transform: scale(1.2);
+  }
+}
+
+:host ::ng-deep {
+  .notification-panel {
+    border: 1px solid #e2e8f0;
+
+    .p-overlaypanel-content {
+      padding: 0;
+    }
+  }
+
+  .professional-profile-menu {
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+
+    .p-menuitem-link {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+
+      .p-menuitem-text {
+        font-weight: 700;
+        font-size: 0.875rem;
+        color: #1e293b;
+      }
+
+      .p-menuitem-icon {
+        color: #64748b;
+      }
+
+      &:hover {
+        background: #f1f5f9;
+      }
+    }
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+  }
+}
+
 ::ng-deep .notification-panel {
   width: 380px;
   border-radius: 16px !important;

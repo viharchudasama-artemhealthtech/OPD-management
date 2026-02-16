@@ -51,7 +51,7 @@ export class ErrorHandlerService {
      * Handles the error by showing notifications and performing side effects (like logout).
      */
     public handleError(error: AppError): void {
-        
+
         if (this.shouldSuppressNotification(error.message)) {
             return;
         }
@@ -77,11 +77,6 @@ export class ErrorHandlerService {
         }
     }
 
-    /**
-     * Maps HTTP status codes to application error codes.
-     * @param status - HTTP status code (e.g., 404, 500)
-     * @returns Corresponding ErrorCode enum value
-     */
     private getErrorCode(status: number): ErrorCode {
         switch (status) {
             case 0: return ErrorCode.NETWORK_ERROR;
@@ -96,13 +91,6 @@ export class ErrorHandlerService {
         }
     }
 
-    /**
-     * Generates a user-friendly error message based on HTTP error.
-     * Uses server message if available, otherwise provides default messages.
-     * 
-     * @param error - The HTTP error response
-     * @returns User-friendly error message
-     */
     private getErrorMessage(error: HttpErrorResponse): string {
         // If server provides a specific message, use it
         if (error.error?.message) {
@@ -120,11 +108,6 @@ export class ErrorHandlerService {
         }
     }
 
-    /**
-     * Generates a short summary title for error notifications.
-     * @param code - The application error code
-     * @returns Short error summary for notification title
-     */
     private getErrorSummary(code: ErrorCode): string {
         switch (code) {
             case ErrorCode.NETWORK_ERROR: return 'Connection Error';
@@ -136,28 +119,15 @@ export class ErrorHandlerService {
         }
     }
 
-    /**
-     * Handles unauthorized errors by logging out the user and redirecting to login.
-     */
     private handleUnauthorized(): void {
         this.authService.logout();
         this.router.navigate(['/login']);
     }
 
-    /**
-     * Handles forbidden errors by redirecting to the unauthorized page.
-     */
     private handleForbidden(): void {
         this.router.navigate(['/unauthorized']);
     }
 
-    /**
-     * Implements debouncing to prevent showing duplicate error notifications.
-     * Suppresses notifications if the same message was shown within DEBOUNCE_TIME.
-     * 
-     * @param message - The error message to check
-     * @returns True if notification should be suppressed, false otherwise
-     */
     private shouldSuppressNotification(message: string): boolean {
         const now = Date.now();
         const isSameMessage = message === this.lastErrorMessage;

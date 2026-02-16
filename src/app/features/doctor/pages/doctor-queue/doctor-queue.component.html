@@ -1,149 +1,93 @@
-<div class="p-3">
-  <div class="mb-4">
-    <h1 class="text-3xl font-bold text-900 m-0">My Queue</h1>
-    <p class="text-500 m-0">Manage your patient queue and consultations</p>
+<div class="queue-container p-4">
+  <div class="flex justify-content-between align-items-center mb-5">
+    <div>
+      <h1 class="text-2xl font-bold text-900 m-0">Patient Queue</h1>
+      <p class="text-500 text-sm mt-1">Manage current patient flow and consultations</p>
+    </div>
+    <div class="flex gap-2">
+      <p-button label="Refresh" icon="pi pi-refresh" styleClass="p-button-text font-semibold"></p-button>
+    </div>
   </div>
 
   @if (queue$ | async; as queue) {
-  <p-card>
-    <p-table #dt [value]="queue" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]"
+  <div class="clinical-card shadow-2 border-round-xl overflow-hidden">
+    <p-table #dt [value]="queue" [paginator]="true" [rows]="10"
       [globalFilterFields]="['tokenNumber', 'patientName', 'department', 'visitType', 'status']"
-      [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} patients"
-      styleClass="p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll">
-      <!-- Caption with Global Search -->
+      styleClass="clinical-table" responsiveLayout="scroll">
+
       <ng-template pTemplate="caption">
         <div class="flex justify-content-between align-items-center">
-          <h3 class="m-0 text-900">Patient Queue</h3>
+          <h3 class="m-0 text-900 font-bold text-base">Waiting List</h3>
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-              placeholder="Search patients..." class="w-full md:w-20rem" />
+              placeholder="Search patients..." class="w-15rem" />
           </span>
         </div>
       </ng-template>
 
-      <!-- Column Headers with Sorting -->
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="queuePosition" style="width: 80px">
-            Queue # <p-sortIcon field="queuePosition"></p-sortIcon>
-          </th>
-          <th pSortableColumn="tokenNumber" style="width: 120px">
+          <th style="width: 80px">#</th>
+          <th pSortableColumn="tokenNumber" style="width: 140px">
             Token <p-sortIcon field="tokenNumber"></p-sortIcon>
           </th>
-          <th pSortableColumn="patientName">Patient <p-sortIcon field="patientName"></p-sortIcon></th>
-          <th pSortableColumn="department">Department <p-sortIcon field="department"></p-sortIcon></th>
+          <th pSortableColumn="patientName">Patient Name <p-sortIcon field="patientName"></p-sortIcon></th>
           <th pSortableColumn="visitType">Type <p-sortIcon field="visitType"></p-sortIcon></th>
-          <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon></th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-          <th style="width: 180px">Actions</th>
-        </tr>
-        <!-- Filter Row -->
-        <tr>
-          <th></th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'tokenNumber', 'contains')"
-              placeholder="Filter" class="w-full p-inputtext-sm" />
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'patientName', 'contains')"
-              placeholder="Filter" class="w-full p-inputtext-sm" />
-          </th>
-          <th></th>
-          <th></th>
-          <th>
-            <p-dropdown [options]="priorityOptions" (onChange)="dt.filter($event.value, 'priority', 'equals')"
-              placeholder="All" [showClear]="true" styleClass="w-full p-inputtext-sm">
-            </p-dropdown>
-          </th>
-          <th>
-            <p-dropdown [options]="statusOptions" (onChange)="dt.filter($event.value, 'status', 'equals')"
-              placeholder="All" [showClear]="true" styleClass="w-full p-inputtext-sm">
-            </p-dropdown>
-          </th>
-          <th></th>
-          <th></th>
+          <th pSortableColumn="priority" style="width: 150px">Priority <p-sortIcon field="priority"></p-sortIcon></th>
+          <th pSortableColumn="status" style="width: 180px">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th style="width: 150px" class="text-right">Action</th>
         </tr>
       </ng-template>
 
-      <!-- Body -->
       <ng-template pTemplate="body" let-token>
-        <tr [class.emergency-row]="token.priority === Priority.URGENT"
-          [class.bg-yellow-50]="token.priority === Priority.HIGH">
+        <tr [class.urgent-row]="token.priority === Priority.URGENT">
+          <td><span class="text-500 font-bold">#{{ token.queuePosition }}</span></td>
+          <td><span class="token-id">{{ token.tokenNumber }}</span></td>
           <td>
-            <span class="font-bold text-primary">{{ token.queuePosition }}</span>
+            <div class="flex flex-column">
+              <span class="font-semibold text-900">{{ token.patientName }}</span>
+              <span class="text-xs text-500">ID: {{ token.patientId.substring(0,8) }}</span>
+            </div>
           </td>
           <td>
-            <span class="font-mono font-bold">{{ token.tokenNumber }}</span>
-          </td>
-          <td>{{ token.patientName }}</td>
-          <td>{{ token.department }}</td>
-          <td>{{ token.visitType }}</td>
-          <td>
-            <p-tag [value]="getPriorityLabel(token.priority)" [severity]="getPrioritySeverity(token.priority)"
-              [icon]="token.priority === Priority.URGENT ? 'pi pi-exclamation-triangle' : (token.priority === Priority.HIGH ? 'pi pi-star-fill' : 'pi pi-user')">
-            </p-tag>
+            <span class="text-700">{{ token.visitType }}</span>
           </td>
           <td>
-            <p-tag [value]="token.status" [severity]="getStatusSeverity(token.status)"></p-tag>
+            <p-tag [value]="getPriorityLabel(token.priority)" [severity]="getPrioritySeverity(token.priority)"></p-tag>
           </td>
           <td>
+            <div class="flex align-items-center gap-2">
+              <span class="w-2 h-2 border-circle" [style.background]="getStatusColor(token.status)"></span>
+              <span class="text-sm text-700">{{ token.status }}</span>
+            </div>
+          </td>
+          <td class="text-right">
             @if (token.status === TokenStatus.CHECKED_IN) {
-            <button pButton label="Call Next" icon="pi pi-phone" class="p-button-sm p-button-success mr-2"
-              [disabled]="!!currentToken" (click)="callNext(token)"
-              [pTooltip]="currentToken ? 'Complete current consultation first' : 'Call patient for consultation'"></button>
+            <p-button label="Examine" icon="pi pi-play" styleClass="p-button-success p-button-sm px-3"
+              (onClick)="callNext(token)"></p-button>
             }
             @if (token.status === TokenStatus.IN_CONSULTATION) {
-            <button pButton label="Complete" icon="pi pi-check" class="p-button-sm p-button-primary"
-              (click)="openConsultationDialog(token)"></button>
+            <p-button label="Resume" icon="pi pi-external-link" styleClass="p-button-info p-button-sm px-3"
+              [routerLink]="['/doctor/consultation', token.id]"
+              [queryParams]="{ patientId: token.patientId }"></p-button>
             }
           </td>
         </tr>
       </ng-template>
 
-      <!-- Empty Message -->
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="9" class="text-center p-4">
-            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
-            <p class="text-500 text-xl mb-2">No patients in queue</p>
-            <p class="text-400 text-sm">Patients will appear here when checked in</p>
+          <td colspan="7" class="text-center py-8">
+            <div class="flex flex-column align-items-center gap-3">
+              <i class="pi pi-inbox text-300 text-5xl"></i>
+              <h3 class="text-400 font-bold m-0">No Patients in Queue</h3>
+              <p class="text-500 m-0 text-sm">Waiting for new check-ins.</p>
+            </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
-  </p-card>
+  </div>
   }
-
-  <!-- Consultation Dialog -->
-  <p-dialog [(visible)]="showConsultationDialog" [modal]="true" [style]="{ width: '50vw' }"
-    header="Complete Consultation">
-    @if (currentToken) {
-    <div class="p-fluid">
-      <div class="mb-3">
-        <h3>Patient: {{ currentToken.patientName }}</h3>
-        <p>Token: {{ currentToken.tokenNumber }}</p>
-      </div>
-
-      <div class="field">
-        <label for="diagnosis">Diagnosis</label>
-        <textarea id="diagnosis" pInputTextarea [(ngModel)]="diagnosis" rows="3" placeholder="Enter diagnosis">
-          </textarea>
-      </div>
-
-      <div class="field">
-        <label for="notes">Notes</label>
-        <textarea id="notes" pInputTextarea [(ngModel)]="notes" rows="5" placeholder="Enter consultation notes">
-          </textarea>
-      </div>
-    </div>
-    }
-
-    <ng-template pTemplate="footer">
-      <button pButton label="Cancel" icon="pi pi-times" class="p-button-text"
-        (click)="showConsultationDialog = false"></button>
-      <button pButton label="Complete" icon="pi pi-check" class="p-button-success"
-        (click)="completeConsultation()"></button>
-    </ng-template>
-  </p-dialog>
 </div>

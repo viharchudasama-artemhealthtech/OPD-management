@@ -7,8 +7,10 @@ import { TokenStatus } from '../../../core/models/enums/token-status.enum';
 import { VisitType } from '../../../core/models/enums/visit-type.enum';
 import { Priority } from '../../../core/models/enums/priority.enum';
 import { Appointment } from '../../../core/models/appointment.model';
+import { AppointmentStatus } from '../../../core/models/enums/appointment-status.enum';
 import { DataSyncService } from '../../../core/services/data-sync.service';
 import { ActivityService } from '../../../core/services/activity.service';
+import { AppointmentService } from './appointment.service';
 import { OpdRepository } from '../repositories/opd.repository';
 
 @Injectable({
@@ -23,6 +25,7 @@ export class OpdService implements OnDestroy {
         private readonly dataSync: DataSyncService,
         private readonly activityService: ActivityService,
         private readonly opdRepository: OpdRepository,
+        private readonly appointmentService: AppointmentService,
     ) {
         this.refreshTokens();
 
@@ -136,12 +139,15 @@ export class OpdService implements OnDestroy {
         });
     }
 
+    public getTokenById(tokenId: string): OpdToken | undefined {
+        return this.tokensSubject.value.find(t => t.id === tokenId);
+    }
+
     public updateTokenStatus(tokenId: string, status: TokenStatus, doctorId?: string): void {
         const tokens = this.tokensSubject.value;
         const index = tokens.findIndex(t => t.id === tokenId);
 
         if (index !== -1) {
-            const updatedList = [...tokens];
             const updatedToken = {
                 ...tokens[index],
                 status,
@@ -153,6 +159,7 @@ export class OpdService implements OnDestroy {
                 updatedToken.consultationStartedAt = new Date();
             }
 
+            const updatedList = [...tokens];
             updatedList[index] = updatedToken;
             this.opdRepository.saveTokens(updatedList);
             this.tokensSubject.next(updatedList);
@@ -165,6 +172,13 @@ export class OpdService implements OnDestroy {
         if (!token) return throwError(() => new Error('Registration record (token) not found.'));
 
         this.updateTokenStatus(tokenId, TokenStatus.COMPLETED);
+
+        // Sync with Appointment if exists
+        if (token.appointmentId) {
+            import('../../../core/models/enums/appointment-status.enum').then(m => {
+                this.appointmentService.updateAppointmentStatus(token.appointmentId!, m.AppointmentStatus.COMPLETED).subscribe();
+            });
+        }
 
         const visit: Visit = {
             id: crypto.randomUUID(),
@@ -186,6 +200,17 @@ export class OpdService implements OnDestroy {
         );
 
         return of(visit);
+    }
+
+    public hasCompletedVisitToday(patientId: string): Observable<boolean> {
+        const today = new Date().toDateString();
+        return this.tokens$.pipe(
+            map(tokens => tokens.some(t =>
+                t.patientId === patientId &&
+                t.status === TokenStatus.COMPLETED &&
+                new Date(t.createdAt).toDateString() === today
+            ))
+        );
     }
 
     public checkInAppointment(appointment: Appointment, department: Department): Observable<OpdToken> {

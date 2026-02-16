@@ -29,13 +29,22 @@
                 <div class="border-1 surface-border border-round">
                   @for (patient of results; track patient.id) {
                   <div
-                    class="search-result-item p-3 border-bottom-1 surface-border flex align-items-center justify-content-between"
-                    (click)="selectPatient(patient)">
-                    <div>
+                    class="search-result-item p-3 border-bottom-1 surface-border flex align-items-center justify-content-between">
+                    <div class="flex-1" (click)="selectPatient(patient)">
                       <div class="font-bold">{{ patient.fullName }}</div>
                       <div class="text-sm text-500">ID: {{ patient.id }} | {{ patient.phone | phone }}</div>
                     </div>
-                    <i class="pi pi-chevron-right text-500"></i>
+                    <div class="flex gap-2">
+                      <button pButton icon="pi pi-heart" class="p-button-rounded p-button-text p-button-success"
+                        (click)="recordVitals(patient.id); $event.stopPropagation()" pTooltip="Record Vitals"></button>
+
+                      <ng-container *ngIf="isBillingEnabled(patient.id) | async">
+                        <button pButton icon="pi pi-receipt" class="p-button-rounded p-button-text p-button-warning"
+                          (click)="generateBill(patient.id); $event.stopPropagation()"
+                          pTooltip="Generate Bill"></button>
+                      </ng-container>
+                      <i class="pi pi-chevron-right text-500 ml-2" (click)="selectPatient(patient)"></i>
+                    </div>
                   </div>
                   }
                 </div>
@@ -162,7 +171,7 @@
                   @for (apt of aptResults; track apt.id) {
                   <div class="search-result-item p-3 border-bottom-1 surface-border" (click)="selectAppointment(apt)">
                     <div class="flex align-items-center justify-content-between">
-                      <div class="flex-1">
+                      <div class="flex-1" (click)="selectAppointment(apt)">
                         <div class="font-bold text-900 mb-1">{{ apt.patientName }}</div>
                         @if (apt.patientPhone) {
                         <div class="text-sm text-600 mb-1">
@@ -176,7 +185,18 @@
                         </div>
                         <div class="text-xs text-primary mt-1">Code: {{ apt.id }}</div>
                       </div>
-                      <i class="pi pi-chevron-right text-500"></i>
+                      <div class="flex gap-2 align-items-center">
+                        <button pButton icon="pi pi-heart" class="p-button-rounded p-button-text p-button-success"
+                          (click)="recordVitals(apt.patientId); $event.stopPropagation()"
+                          pTooltip="Record Vitals"></button>
+
+                        <ng-container *ngIf="isBillingEnabled(apt.patientId) | async">
+                          <button pButton icon="pi pi-receipt" class="p-button-rounded p-button-text p-button-warning"
+                            (click)="generateBill(apt.patientId); $event.stopPropagation()"
+                            pTooltip="Generate Bill"></button>
+                        </ng-container>
+                        <i class="pi pi-chevron-right text-500 ml-2" (click)="selectAppointment(apt)"></i>
+                      </div>
                     </div>
                   </div>
                   }

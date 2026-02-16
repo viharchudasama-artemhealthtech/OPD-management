@@ -9,6 +9,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { AvatarModule } from 'primeng/avatar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { AppUser } from '../../../../core/models/user.model';
@@ -32,6 +33,7 @@ import { Observable } from 'rxjs';
     DialogModule,
     TagModule,
     ToastModule,
+    AvatarModule,
     ConfirmDialogModule,
   ],
   providers: [MessageService, ConfirmationService],
@@ -45,6 +47,11 @@ export class UsersComponent {
   public userForm: FormGroup;
   public searchValue = '';
   public readonly users$: Observable<AppUser[]>;
+
+  public readonly statusOptions = [
+    { label: 'Active', value: UserStatus.ACTIVE },
+    { label: 'Inactive', value: UserStatus.INACTIVE },
+  ];
 
   public readonly roles = [
     { label: 'Admin', value: UserRole.ADMIN },
@@ -139,5 +146,9 @@ export class UsersComponent {
 
   public getStatusSeverity(status: UserStatus): 'success' | 'warning' {
     return status === UserStatus.ACTIVE ? 'success' : 'warning';
+  }
+
+  public getInitials(name: string): string {
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
   }
 }

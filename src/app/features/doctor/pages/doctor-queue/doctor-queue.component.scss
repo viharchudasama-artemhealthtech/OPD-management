@@ -1,22 +1,90 @@
-  .emergency-row {
-    background-color: #fee2e2 !important;
-    animation: flash 2s infinite;
+.queue-container {
+  background-color: #f8fafc;
+  min-height: calc(100vh - 80px);
+}
+
+.clinical-table {
+  .p-datatable-header {
+    background: white;
+    padding: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
   }
 
-  @keyframes flash {
-    0% {
-      background-color: #fee2e2;
-    }
-
-    50% {
-      background-color: #fecaca;
-    }
-
-    100% {
-      background-color: #fee2e2;
-    }
+  .p-datatable-thead>tr>th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1.25rem 1rem;
+    border-bottom: 2px solid #f1f5f9;
   }
 
-  .p-datatable .p-datatable-tbody>tr.emergency-row:hover {
-    background-color: #fecaca !important;
+  .p-datatable-tbody>tr {
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
+
+    >td {
+      padding: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 0.875rem;
+    }
   }
+}
+
+.token-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  color: var(--primary-color);
+}
+
+.urgent-pulse {
+  animation: urgent-bg 1.5s infinite;
+}
+
+@keyframes urgent-bg {
+  0% {
+    background-color: rgba(254, 226, 226, 0.5);
+  }
+
+  50% {
+    background-color: rgba(254, 226, 226, 1);
+  }
+
+  100% {
+    background-color: rgba(254, 226, 226, 0.5);
+  }
+}
+
+.priority-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+@keyframes flash {
+  0% {
+    background-color: #fee2e2;
+  }
+
+  50% {
+    background-color: #fecaca;
+  }
+
+  100% {
+    background-color: #fee2e2;
+  }
+}
+
+.p-datatable .p-datatable-tbody>tr.emergency-row:hover {
+  background-color: #fecaca !important;
+}

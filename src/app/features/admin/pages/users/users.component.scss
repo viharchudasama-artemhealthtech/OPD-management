@@ -29,7 +29,7 @@ h1 {
 ::ng-deep .p-datatable {
   background-color: #ffffff;
 
-  .p-datatable-thead > tr > th {
+  .p-datatable-thead>tr>th {
     background-color: #f8f9fa;
     color: #667eea;
     font-weight: 600;
@@ -37,7 +37,7 @@ h1 {
     padding: 1rem;
   }
 
-  .p-datatable-tbody > tr > td {
+  .p-datatable-tbody>tr>td {
     padding: 1rem;
     border-color: #efefef;
 
@@ -46,7 +46,7 @@ h1 {
     }
   }
 
-  .p-datatable-tbody > tr:hover {
+  .p-datatable-tbody>tr:hover {
     background-color: #f8f9fa;
   }
 }
@@ -146,7 +146,7 @@ h1 {
 }
 
 // Form controls
-::ng-deep .p-input-icon-left > input {
+::ng-deep .p-input-icon-left>input {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -158,9 +158,87 @@ h1 {
   }
 }
 
-::ng-deep .p-input-icon-left > .pi {
+::ng-deep .p-input-icon-left>.pi {
   left: 0.75rem;
   color: #999;
+}
+
+.user-management-page {
+  .p-datatable-professional {
+    .p-datatable-thead>tr>th {
+      padding: 1.5rem 1rem;
+      border-top: none !important;
+    }
+
+    .p-datatable-tbody>tr>td {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #f1f5f9 !important;
+    }
+  }
+
+  .professional-input {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+
+    &:focus {
+      background: white !important;
+      border-color: var(--primary-color) !important;
+      box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.1) !important;
+    }
+  }
+
+  .w-0-5rem {
+    width: 0.5rem;
+  }
+
+  .h-0-5rem {
+    height: 0.5rem;
+  }
+
+  .py-10 {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+:host ::ng-deep {
+  .professional-dialog {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    .p-dialog-header {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #0f172a;
+
+      .p-dialog-title {
+        font-weight: 800;
+        font-size: 1.25rem;
+        letter-spacing: -0.025em;
+      }
+    }
+
+    .p-dialog-content {
+      padding: 2rem;
+      background: white;
+    }
+
+    .p-dropdown-panel {
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .professional-input {
+    .p-dropdown {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+  }
 }
 
 // Utility classes

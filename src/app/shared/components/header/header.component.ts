@@ -6,6 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../../features/auth/services/auth.service';
 import { NotificationService, Notification } from '../../../core/services/notification.service';
 import { SystemSettingsService, SystemSettings } from '../../../core/services/system-settings.service';
@@ -16,7 +17,7 @@ import { User } from '../../../core/models/user.model';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule, AvatarModule, MenuModule, BadgeModule, OverlayPanelModule],
+  imports: [CommonModule, RouterModule, ButtonModule, AvatarModule, MenuModule, BadgeModule, OverlayPanelModule, InputTextModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,209 +1,186 @@
-<div class="p-4">
+<div class="user-management-page p-4 bg-50 min-h-screen">
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
 
-  <!-- Header -->
-  <div class="flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="text-3xl font-bold text-900 m-0">User Management</h1>
-      <p class="text-500 m-0">Create, manage, and monitor system users and their roles.</p>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div
+      class="flex flex-column md:flex-row justify-content-between align-items-start md:align-items-center mb-5 gap-3">
+      <div>
+        <h1 class="text-4xl font-black text-900 m-0 tracking-tight">Identity Control</h1>
+        <p class="text-600 m-0 font-medium">Manage system access, roles, and security policies</p>
+      </div>
+      <div class="flex gap-2">
+        <button pButton label="Add New Operator" icon="pi pi-user-plus"
+          class="p-button-primary font-bold shadow-2 px-4 py-3" (click)="openDialog()"></button>
+      </div>
     </div>
-    <button pButton label="New User" icon="pi pi-plus" class="p-button-primary" (click)="openDialog()"></button>
+
+    <!-- Stats summary (Dynamic later) -->
+    <div class="grid mb-5">
+      <div class="col-12 md:col-4">
+        <div class="surface-card p-4 border-round-xl shadow-1 border-1 surface-border flex align-items-center gap-4">
+          <div class="w-3rem h-3rem border-circle bg-blue-100 flex align-items-center justify-content-center">
+            <i class="pi pi-users text-xl text-blue-700"></i>
+          </div>
+          <div>
+            <span class="block text-500 font-bold uppercase text-xs tracking-wider mb-1">Total Users</span>
+            <span class="text-2xl font-black text-900">{{ (users$ | async)?.length || 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Table -->
+    <div class="surface-card shadow-3 border-round-xl border-1 surface-border overflow-hidden">
+      <!-- Table Filter Header -->
+      <div
+        class="p-4 bg-white border-bottom-1 surface-border flex flex-column md:flex-row justify-content-between align-items-center gap-3">
+        <span class="p-input-icon-left w-full md:w-30rem">
+          <i class="pi pi-search text-500"></i>
+          <input pInputText type="text" [(ngModel)]="searchValue" (input)="dt.filterGlobal(searchValue, 'contains')"
+            placeholder="Search by name, ID, or email..." class="w-full professional-input h-3rem" />
+        </span>
+        <div class="flex align-items-center gap-2">
+          <span class="text-sm text-500 font-bold mr-2">Sort By:</span>
+          <p-dropdown [options]="roles" placeholder="Role Filter" styleClass="w-12rem professional-input"></p-dropdown>
+        </div>
+      </div>
+
+      <p-table #dt [value]="(users$ | async) || []" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+        responsiveLayout="stack" breakpoint="960px" styleClass="p-datatable-professional">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest pl-4">Account</th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest">Email Address
+            </th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-center">
+              System Role</th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-center">
+              Status</th>
+            <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest text-right pr-4">
+              Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+          <tr class="hover:bg-50 transition-colors">
+            <td class="pl-4 py-3">
+              <div class="flex align-items-center gap-3">
+                <p-avatar [label]="getInitials(user.fullName)" shape="circle" size="large"
+                  styleClass="font-bold bg-primary-50 text-primary-700"></p-avatar>
+                <div class="flex flex-column">
+                  <span class="text-900 font-bold text-sm">{{ user.fullName }}</span>
+                  <span class="text-500 text-xs font-medium">&#64;{{ user.username }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-700 font-medium text-sm">{{ user.email }}</span>
+            </td>
+            <td class="text-center">
+              <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"
+                styleClass="font-black text-xs px-3"></p-tag>
+            </td>
+            <td class="text-center">
+              <div class="flex align-items-center justify-content-center gap-2">
+                <span class="w-0-5rem h-0-5rem border-circle"
+                  [ngClass]="user.status === 'Active' ? 'bg-green-500' : 'bg-red-500'"></span>
+                <span class="text-xs font-bold uppercase tracking-widest"
+                  [ngClass]="user.status === 'Active' ? 'text-green-700' : 'text-red-700'">{{ user.status }}</span>
+              </div>
+            </td>
+            <td class="text-right pr-4">
+              <div class="flex justify-content-end gap-1">
+                <button pButton icon="pi pi-pencil"
+                  class="p-button-text p-button-rounded p-button-secondary hover:bg-white"
+                  (click)="editUser(user)"></button>
+                <button pButton icon="pi pi-trash" class="p-button-text p-button-rounded p-button-danger hover:bg-white"
+                  (click)="deleteUser(user)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="py-10 text-center">
+              <div class="flex flex-column align-items-center">
+                <i class="pi pi-users text-4xl text-300 mb-3"></i>
+                <p class="text-500 font-bold m-0">Secure registry is empty</p>
+                <p class="text-400 text-xs mt-1">No operators matching the current security filters were found.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 
-  <!-- Search -->
-  <div class="mb-4">
-    <p-card>
-      <span class="p-input-icon-left w-full">
-        <i class="pi pi-search"></i>
-        <input
-          pInputText
-          type="text"
-          placeholder="Search by name, username, or email..."
-          [(ngModel)]="searchValue"
-          class="w-full"
-        />
-      </span>
-    </p-card>
-  </div>
-
-  <!-- Users Table -->
-  <p-card>
-    <p-table
-      #dt
-      [value]="(users$ | async) || []"
-      [paginator]="true"
-      [rows]="10"
-      [rowsPerPageOptions]="[5, 10, 20, 50]"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      styleClass="p-datatable-striped"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th colspan="7">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                [(ngModel)]="searchValue"
-                (input)="dt.filterGlobal(searchValue, 'contains')"
-                placeholder="Search by name, username, or email..."
-                class="w-full"
-              />
-            </span>
-          </th>
-        </tr>
-        <tr>
-          <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
-          <th pSortableColumn="fullName">Full Name <p-sortIcon field="fullName"></p-sortIcon></th>
-          <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-          <th pSortableColumn="role">Role <p-sortIcon field="role"></p-sortIcon></th>
-          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-          <th pSortableColumn="lastLogin">Last Login <p-sortIcon field="lastLogin"></p-sortIcon></th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="body" let-user>
-        <tr>
-          <td>
-            <span class="font-mono font-bold">{{ user.username }}</span>
-          </td>
-          <td>{{ user.fullName }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"></p-tag>
-          </td>
-          <td>
-            <p-tag [value]="user.status" [severity]="getStatusSeverity(user.status)"></p-tag>
-          </td>
-          <td>{{ user.lastLogin | date: 'short' }}</td>
-          <td>
-            <button
-              pButton
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="editUser(user)"
-              title="Edit"
-            ></button>
-            <button
-              pButton
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-danger p-button-sm"
-              (click)="deleteUser(user)"
-              title="Delete"
-            ></button>
-          </td>
-        </tr>
-      </ng-template>
-
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="7" class="text-center p-4">
-            <i class="pi pi-inbox text-4xl text-400 mb-3 block"></i>
-            <p class="text-500">No users found.</p>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
-
-  <!-- User Dialog -->
-  <p-dialog
-    [(visible)]="displayDialog"
-    [modal]="true"
-    [style]="{ width: '50vw' }"
-    [header]="selectedUser ? 'Edit User' : 'Create New User'"
-    (onHide)="closeDialog()"
-  >
+  <!-- Refined User Dialog -->
+  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{ width: '450px' }"
+    [header]="selectedUser ? 'Modify Access' : 'Create Operator'" (onHide)="closeDialog()"
+    styleClass="professional-dialog" [draggable]="false" [resizable]="false">
     @if (displayDialog) {
-      <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+    <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="pt-2">
+      <div class="flex flex-column gap-4">
+        <div class="field">
+          <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Operator Name</label>
+          <input pInputText type="text" formControlName="fullName" class="w-full h-3rem professional-input"
+            placeholder="e.g. Dr. Sarah Smith" />
+        </div>
+
         <div class="grid">
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Username</label>
-              <input pInputText type="text" formControlName="username" class="w-full" placeholder="Enter username" />
+          <div class="col-6">
+            <div class="field">
+              <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Username</label>
+              <input pInputText type="text" formControlName="username" class="w-full h-3rem professional-input"
+                placeholder="sarah_s" />
             </div>
           </div>
-
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Full Name</label>
-              <input pInputText type="text" formControlName="fullName" class="w-full" placeholder="Enter full name" />
-            </div>
-          </div>
-
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Email</label>
-              <input pInputText type="email" formControlName="email" class="w-full" placeholder="Enter email" />
-            </div>
-          </div>
-
-          <div class="col-12 md:col-6">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Role</label>
-              <p-dropdown
-                [options]="roles"
-                formControlName="role"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select Role"
-                class="w-full"
-              ></p-dropdown>
-            </div>
-          </div>
-
-          <div class="col-12 md:col-6">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Status</label>
-              <p-dropdown
-                [options]="[
-                  { label: 'Active', value: 'Active' },
-                  { label: 'Inactive', value: 'Inactive' },
-                ]"
-                formControlName="status"
-                placeholder="Select Status"
-                class="w-full"
-              ></p-dropdown>
-            </div>
-          </div>
-
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="block text-500 font-medium mb-2">Password</label>
-              <input
-                pInputText
-                type="password"
-                formControlName="password"
-                class="w-full"
-                placeholder="Set user password"
-              />
-              <small class="text-500">Default: password123</small>
+          <div class="col-6">
+            <div class="field">
+              <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Email</label>
+              <input pInputText type="email" formControlName="email" class="w-full h-3rem professional-input"
+                placeholder="sarah@opd.local" />
             </div>
           </div>
         </div>
 
-        <div class="flex justify-content-end gap-2">
-          <button
-            pButton
-            label="Cancel"
-            icon="pi pi-times"
-            (click)="closeDialog()"
-            class="p-button-text"
-            type="button"
-          ></button>
-          <button
-            pButton
-            [label]="selectedUser ? 'Update' : 'Create'"
-            icon="pi pi-check"
-            class="p-button-success"
-            type="submit"
-            [disabled]="userForm.invalid"
-          ></button>
+        <div class="grid">
+          <div class="col-6">
+            <div class="field">
+              <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Security Role</label>
+              <p-dropdown [options]="roles" formControlName="role" optionLabel="label" optionValue="value"
+                placeholder="Select Role" styleClass="w-full h-3rem professional-input" appendTo="body"></p-dropdown>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="field">
+              <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Access Status</label>
+              <p-dropdown [options]="statusOptions" formControlName="status" placeholder="Status"
+                styleClass="w-full h-3rem professional-input" appendTo="body"></p-dropdown>
+            </div>
+          </div>
         </div>
-      </form>
+
+        <div class="field bg-50 p-3 border-round-lg border-1 surface-border">
+          <label class="block text-700 font-bold text-xs uppercase mb-2 tracking-widest">Credentials</label>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-lock text-500"></i>
+            <input pInputText type="password" formControlName="password"
+              class="border-none bg-transparent w-full p-0 font-bold text-900" placeholder="••••••••" />
+          </div>
+          <p class="m-0 text-xs text-500 mt-2">Passwords are encrypted at rest via AES-256 standard.</p>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end gap-3 mt-6 pt-3 border-top-1 surface-border">
+        <p-button label="Discard" [text]="true" (click)="closeDialog()" styleClass="text-700 font-bold"></p-button>
+        <p-button [label]="selectedUser ? 'Authorize Update' : 'Initialize Account'" icon="pi pi-check-circle"
+          class="shadow-2" type="submit" [disabled]="userForm.invalid"></p-button>
+      </div>
+    </form>
     }
   </p-dialog>
 </div>

@@ -1,0 +1,143 @@
+<div class="vitals-entry-container p-4">
+    <p-toast></p-toast>
+
+    <div class="flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="m-0 text-3xl font-bold text-900">Nursing Vitals Station</h2>
+            <p class="text-600 m-0">Record patient vitals before consultation</p>
+        </div>
+        <p-button label="Back to List" icon="pi pi-arrow-left" severity="secondary" [text]="true"
+            (onClick)="onCancel()"></p-button>
+    </div>
+
+    <div class="grid">
+        <!-- Patient Selection -->
+        <div class="col-12 lg:col-3">
+            <p-card header="Patient Selection">
+                <div class="field mb-4">
+                    <label for="patientSearch" class="block font-medium mb-2">Search Patient</label>
+                    <p-dropdown [options]="allPatients" [(ngModel)]="patientId" optionLabel="fullName" optionValue="id"
+                        [filter]="true" filterBy="fullName,id,appointmentCode" placeholder="Select a patient"
+                        (onChange)="selectPatient($any($event).value)" appendTo="body" styleClass="w-full">
+                        <ng-template let-p pTemplate="item">
+                            <div class="flex align-items-center justify-content-between w-full">
+                                <div class="flex align-items-center gap-2">
+                                    <i class="pi pi-user text-primary"></i>
+                                    <span>{{ p.fullName }} ({{ p.id }})</span>
+                                </div>
+                                <div *ngIf="p.hasAppointment" class="flex flex-column align-items-end">
+                                    <span class="text-xs font-bold text-orange-500">APPOINTMENT TODAY</span>
+                                    <span class="text-xs text-500">{{ p.appointmentCode }}</span>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+
+                <div *ngIf="patient" class="patient-card p-3 surface-ground border-round">
+                    <div class="flex align-items-center gap-3 mb-3">
+                        <i class="pi pi-user text-3xl text-primary"></i>
+                        <div>
+                            <div class="font-bold text-lg">{{ patient.fullName }}</div>
+                            <div class="text-sm text-600">{{ patient.id }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="!patient" class="text-center p-5 surface-50 border-round border-dashed">
+                    <i class="pi pi-search text-3xl text-300 mb-2"></i>
+                    <p class="text-600">Select a patient to record vitals</p>
+                </div>
+            </p-card>
+        </div>
+
+        <!-- Vitals Form -->
+        <div class="col-12 lg:col-9">
+            <p-card header="Vital Signs">
+                <div *ngIf="!patient"
+                    class="flex flex-column align-items-center justify-content-center p-8 text-center surface-50 border-round">
+                    <i class="pi pi-user-plus text-5xl mb-3 text-300"></i>
+                    <h3 class="m-0 text-900">No Patient Selected</h3>
+                    <p class="text-600 mt-2 mb-0">Please search and select a patient from the left panel to record
+                        vitals.</p>
+                </div>
+
+                <form *ngIf="patient" [formGroup]="vitalsForm" (ngSubmit)="onSubmit()" class="grid p-fluid">
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Temperature (°F) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="temperature" mode="decimal" [minFractionDigits]="1"
+                            placeholder="98.6"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('temperature')?.invalid && vitalsForm.get('temperature')?.touched">Required
+                            (90-110°F)</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Pulse (BPM) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="pulse" placeholder="72"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('pulse')?.invalid && vitalsForm.get('pulse')?.touched">Required
+                            (30-250 BPM)</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Systolic BP (mmHg) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="systolic" placeholder="120"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('systolic')?.invalid && vitalsForm.get('systolic')?.touched">Required
+                            (50-300)</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Diastolic BP (mmHg) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="diastolic" placeholder="80"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('diastolic')?.invalid && vitalsForm.get('diastolic')?.touched">Required
+                            (30-200)</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">SpO2 (%) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="spo2" suffix="%" [min]="0" [max]="100"
+                            placeholder="98"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('spo2')?.invalid && vitalsForm.get('spo2')?.touched">Required
+                            (0-100%)</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Weight (kg) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="weight" [minFractionDigits]="1"
+                            placeholder="70.0"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('weight')?.invalid && vitalsForm.get('weight')?.touched">Required</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">Height (cm) <span class="text-red-500">*</span></label>
+                        <p-inputNumber formControlName="height" placeholder="170"></p-inputNumber>
+                        <small class="text-red-500"
+                            *ngIf="vitalsForm.get('height')?.invalid && vitalsForm.get('height')?.touched">Required</small>
+                    </div>
+
+                    <div class="col-12 md:col-3 field">
+                        <label class="font-bold">BMI</label>
+                        <p-inputNumber formControlName="bmi" [disabled]="true" [minFractionDigits]="2"></p-inputNumber>
+                    </div>
+
+                    <div class="col-12 field">
+                        <label class="font-bold">Clinical Notes</label>
+                        <textarea pInputTextarea formControlName="notes" rows="2"
+                            placeholder="Any specific observations?"></textarea>
+                    </div>
+
+                    <div class="col-12 flex justify-content-end gap-2 mt-4">
+                        <p-button label="Cancel" severity="secondary" (onClick)="onCancel()"></p-button>
+                        <p-button type="submit" label="Record Vitals" icon="pi pi-check"
+                            [disabled]="vitalsForm.invalid || !patient"></p-button>
+                    </div>
+                </form>
+            </p-card>
+        </div>
+    </div>
+</div>

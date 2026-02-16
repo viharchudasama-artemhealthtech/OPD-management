@@ -23,7 +23,7 @@ export const receptionistRoutes: Routes = [
   },
   {
     path: 'patients',
-    loadComponent: () => import('./pages/patient-list/patient-list.component').then(m  => m.PatientListComponent),
+    loadComponent: () => import('./pages/patient-list/patient-list.component').then(m => m.PatientListComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: [UserRole.RECEPTIONIST] },
   },
@@ -35,5 +35,29 @@ export const receptionistRoutes: Routes = [
       ),
     canActivate: [authGuard, roleGuard],
     data: { roles: [UserRole.RECEPTIONIST] },
+  },
+  {
+    path: 'vitals',
+    loadComponent: () => import('../nursing/pages/vitals-entry/vitals-entry.component').then(m => m.VitalsEntryComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.RECEPTIONIST, UserRole.DOCTOR] },
+  },
+  {
+    path: 'vitals/:patientId',
+    loadComponent: () => import('../nursing/pages/vitals-entry/vitals-entry.component').then(m => m.VitalsEntryComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.RECEPTIONIST, UserRole.DOCTOR] },
+  },
+  {
+    path: 'billing',
+    loadComponent: () => import('./pages/billing/billing.component').then(m => m.BillingComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.RECEPTIONIST, UserRole.ADMIN] },
+  },
+  {
+    path: 'prescriptions',
+    loadComponent: () => import('../doctor/pages/prescription-list/prescription-list.component').then(m => m.PrescriptionListComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.RECEPTIONIST, UserRole.DOCTOR] },
   },
 ];

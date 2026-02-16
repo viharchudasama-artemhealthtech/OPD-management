@@ -103,6 +103,17 @@ export class BookAppointmentComponent implements OnInit {
       this.loadAvailableSlots();
     });
 
+    // Auto-select doctor when department changes
+    this.bookingForm.get('department')?.valueChanges.subscribe(() => {
+      const doctors = this.filteredDoctors;
+      if (doctors.length > 0) {
+        this.bookingForm.patchValue({ doctorId: doctors[0].id });
+      } else {
+        this.bookingForm.patchValue({ doctorId: null });
+      }
+      this.loadAvailableSlots();
+    });
+
     this.bookingForm.get('doctorId')?.valueChanges.subscribe(() => {
       this.loadAvailableSlots();
     });
@@ -141,7 +152,10 @@ export class BookAppointmentComponent implements OnInit {
   }
 
   public bookAppointment(): void {
-    if (!this.currentUser) return;
+    if (!this.currentUser) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'User session not found' });
+      return;
+    }
 
     if (this.bookingForm.invalid) {
       this.messageService.add({
