@@ -14,15 +14,12 @@ import { VitalsService } from '../../services/vitals.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
-import { UserService } from '../../../admin/services/user.service';
-import { UserRole } from '../../../../core/models/enums/user-role.enum';
-import { AppointmentService } from '../../../receptionist/services/appointment.service';
-import { AppointmentStatus } from '../../../../core/models/enums/appointment-status.enum';
+import { OpdService } from '../../../receptionist/services/opd.service';
+import { TokenStatus } from '../../../../core/models/enums/token-status.enum';
 import { combineLatest, map } from 'rxjs';
 
 interface PatientOption extends Patient {
-    appointmentCode?: string;
-    hasAppointment?: boolean;
+    tokenNumber?: string;
 }
 
 @Component({
@@ -55,8 +52,7 @@ export class VitalsEntryComponent implements OnInit {
         private fb: FormBuilder,
         private vitalsService: VitalsService,
         private patientService: PatientService,
-        private appointmentService: AppointmentService,
-        private userService: UserService,
+        private opdService: OpdService,
         private route: ActivatedRoute,
         private router: Router,
         private messageService: MessageService
@@ -76,54 +72,31 @@ export class VitalsEntryComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Only show patients who have checked in today (CHECKED_IN or IN_CONSULTATION).
+        // Patients must go through OPD Check-in before vitals can be recorded.
         combineLatest([
             this.patientService.patients$,
-            this.appointmentService.appointments$,
-            this.userService.users$
+            this.opdService.tokens$
         ]).pipe(
-            map(([patients, appointments, users]) => {
+            map(([patients, tokens]) => {
                 const today = new Date().toDateString();
-
-                // Get all registered patients
-                const patientOptions: PatientOption[] = patients.map(p => {
-                    const todayApt = appointments.find(a =>
-                        a.patientId === p.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    );
-                    return {
-                        ...p,
-                        appointmentCode: todayApt?.id,
-                        hasAppointment: !!todayApt
-                    };
-                });
-
-                // Add Portal Users (Role: PATIENT) who aren't registered yet
-                const portalUsers = users.filter(u =>
-                    u.role === UserRole.PATIENT &&
-                    !patientOptions.some(p => p.id === u.id)
-                ).map(u => ({
-                    id: u.id,
-                    fullName: u.fullName,
-                    phone: u.phone || 'Portal User',
-                    age: u.age,
-                    gender: u.gender as any,
-                    email: u.email,
-                    createdAt: u.createdAt,
-                    updatedAt: u.updatedAt,
-                    hasAppointment: !!appointments.find(a =>
-                        a.patientId === u.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    ),
-                    appointmentCode: appointments.find(a =>
-                        a.patientId === u.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    )?.id
-                } as PatientOption));
-
-                return [...patientOptions, ...portalUsers];
+                const activeTokens = tokens.filter(t =>
+                    new Date(t.createdAt).toDateString() === today &&
+                    (t.status === TokenStatus.CHECKED_IN || t.status === TokenStatus.IN_CONSULTATION)
+                );
+                const seen = new Set<string>();
+                return activeTokens
+                    .filter(t => {
+                        if (seen.has(t.patientId)) return false;
+                        seen.add(t.patientId);
+                        return true;
+                    })
+                    .map(token => {
+                        const patient = patients.find(p => p.id === token.patientId);
+                        if (!patient) return null;
+                        return { ...patient, tokenNumber: token.tokenNumber } as PatientOption;
+                    })
+                    .filter((p): p is PatientOption => p !== null);
             })
         ).subscribe(all => {
             this.allPatients = all;

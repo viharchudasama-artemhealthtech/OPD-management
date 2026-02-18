@@ -32,35 +32,56 @@
     </div>
   </div>
 
-  <div class="grid">
-    <!-- Monitor Section -->
+  <!-- Charts Row -->
+  <div class="grid mb-5">
+    <!-- Daily Patient Inflow Line Chart -->
     <div class="col-12 lg:col-7">
       <p-card styleClass="shadow-2 border-round-xl h-full">
         <ng-template pTemplate="title">
-          <span class="text-lg font-bold">System Status</span>
-        </ng-template>
-
-        <div class="grid pb-4">
-          <div *ngFor="let item of data.systemStatus" class="col-12 sm:col-6 lg:col-4 mb-3">
-            <div
-              class="p-3 border-1 surface-border border-round-lg hover:border-primary transition-colors h-full bg-50">
-              <div class="flex align-items-center gap-3 mb-2">
-                <i [class]="'pi ' + item.icon + ' text-lg text-primary'"></i>
-                <span class="font-semibold text-800 text-sm">{{ item.name }}</span>
-              </div>
-              <div class="flex justify-content-between align-items-end">
-                <p-tag [value]="item.status" [severity]="item.severity" styleClass="text-xs"></p-tag>
-                <span class="text-xs text-600 font-semibold">{{ item.value }}</span>
-              </div>
+          <div class="flex align-items-center gap-2">
+            <div class="w-2rem h-2rem border-round-lg flex align-items-center justify-content-center"
+              style="background: linear-gradient(135deg, #0891b2, #06b6d4);">
+              <i class="pi pi-chart-line text-white" style="font-size:0.75rem;"></i>
             </div>
+            <span class="text-lg font-bold">Patient Inflow Today</span>
           </div>
-        </div>
+        </ng-template>
+        <p-chart type="line" [data]="data.dailyVisits" [options]="lineChartOptions" height="260px"></p-chart>
+      </p-card>
+    </div>
 
-        <div class="pt-4 border-top-1 surface-border flex gap-2">
-          <button pButton label="System Audit" icon="pi pi-shield" class="p-button-outlined p-button-sm"></button>
-          <button pButton label="Cache" icon="pi pi-refresh" class="p-button-outlined p-button-sm"></button>
-          <button pButton label="Sync" icon="pi pi-sync" class="p-button-sm"></button>
-        </div>
+    <!-- Department Distribution Doughnut -->
+    <div class="col-12 lg:col-5">
+      <p-card styleClass="shadow-2 border-round-xl h-full">
+        <ng-template pTemplate="title">
+          <div class="flex align-items-center gap-2">
+            <div class="w-2rem h-2rem border-round-lg flex align-items-center justify-content-center"
+              style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">
+              <i class="pi pi-chart-pie text-white" style="font-size:0.75rem;"></i>
+            </div>
+            <span class="text-lg font-bold">Department Distribution</span>
+          </div>
+        </ng-template>
+        <p-chart type="doughnut" [data]="data.departmentDist" [options]="doughnutChartOptions" height="260px"></p-chart>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Workload Bar Chart + Activity Row -->
+  <div class="grid">
+    <!-- Department Workload Bar Chart -->
+    <div class="col-12 lg:col-7">
+      <p-card styleClass="shadow-2 border-round-xl h-full">
+        <ng-template pTemplate="title">
+          <div class="flex align-items-center gap-2">
+            <div class="w-2rem h-2rem border-round-lg flex align-items-center justify-content-center"
+              style="background: linear-gradient(135deg, #059669, #10b981);">
+              <i class="pi pi-chart-bar text-white" style="font-size:0.75rem;"></i>
+            </div>
+            <span class="text-lg font-bold">Department Workload</span>
+          </div>
+        </ng-template>
+        <p-chart type="bar" [data]="data.workload" [options]="barChartOptions" height="260px"></p-chart>
       </p-card>
     </div>
 
@@ -68,13 +89,10 @@
     <div class="col-12 lg:col-5">
       <p-card styleClass="shadow-2 border-round-xl h-full">
         <ng-template pTemplate="title">
-          <div class="flex justify-content-between align-items-center">
-            <span class="text-lg font-bold">Recent Activity</span>
-            <p-button label="View All" [text]="true" styleClass="p-0 font-semibold text-sm"></p-button>
-          </div>
+          <span class="text-lg font-bold">Recent Activity</span>
         </ng-template>
 
-        <div class="timeline-stream">
+        <div class="timeline-stream" style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
           <div *ngFor="let activity of data.activities; let last = last" class="mb-4">
             <div class="flex align-items-start gap-3 p-3 border-round-lg bg-50">
               <div
@@ -115,13 +133,8 @@
           <div class="font-semibold text-sm">Patients</div>
         </div>
       </div>
-      <div class="col-6 md:col-4 lg:col-2">
-        <div
-          class="surface-card p-4 border-round-xl shadow-2 text-center hover:bg-primary-50 transition-all cursor-pointer border-1 surface-border group opacity-60">
-          <i class="pi pi-cog text-2xl mb-2 text-primary"></i>
-          <div class="font-semibold text-sm">Settings</div>
-        </div>
-      </div>
+
     </div>
   </div>
+
 </div>

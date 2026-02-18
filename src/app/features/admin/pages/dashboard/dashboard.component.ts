@@ -8,16 +8,16 @@ import { MenuModule } from 'primeng/menu';
 import { TagModule } from 'primeng/tag';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppointmentStatus } from '../../../../core/models/enums/appointment-status.enum';
-import { TokenStatus } from '../../../../core/models/enums/token-status.enum';
-import { AnalyticsService, StatCard } from '../../../../core/services/analytics.service';
+import { AnalyticsService, StatCard, ChartData } from '../../../../core/services/analytics.service';
 import { UserService } from '../../services/user.service';
-import { ActivityService, Activity } from '../../../../core/services/activity.service';
+import { ActivityService } from '../../../../core/services/activity.service';
 
 interface DashboardData {
   stats: StatCard[];
   activities: any[];
-  systemStatus: any[];
+  dailyVisits: ChartData;
+  departmentDist: ChartData;
+  workload: ChartData;
 }
 
 @Component({
@@ -32,6 +32,67 @@ export class DashboardComponent {
   public readonly dashboardData$: Observable<DashboardData>;
   public today: Date = new Date();
 
+  /* ── Shared chart options ───────────────────────────── */
+  public lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: '#334155', font: { family: 'Outfit', weight: '600' } },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: '#64748b', font: { family: 'Outfit' } },
+        grid: { color: 'rgba(8,145,178,0.07)' },
+      },
+      y: {
+        ticks: { color: '#64748b', font: { family: 'Outfit' } },
+        grid: { color: 'rgba(8,145,178,0.07)' },
+        beginAtZero: true,
+      },
+    },
+  };
+
+  public doughnutChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#334155',
+          font: { family: 'Outfit', weight: '600' },
+          padding: 14,
+          usePointStyle: true,
+          pointStyleWidth: 10,
+        },
+      },
+    },
+  };
+
+  public barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: '#334155', font: { family: 'Outfit', weight: '600' } },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: '#64748b', font: { family: 'Outfit' } },
+        grid: { display: false },
+      },
+      y: {
+        ticks: { color: '#64748b', font: { family: 'Outfit' } },
+        grid: { color: 'rgba(8,145,178,0.07)' },
+        beginAtZero: true,
+      },
+    },
+  };
+
   constructor(
     private readonly analyticsService: AnalyticsService,
     private readonly userService: UserService,
@@ -41,50 +102,29 @@ export class DashboardComponent {
       this.analyticsService.getDashboardStats(),
       this.userService.users$,
       this.activityService.activities$,
+      this.analyticsService.getDailyVisits(),
+      this.analyticsService.getDepartmentDistribution(),
+      this.analyticsService.getWorkloadStats(),
     ]).pipe(
-      map(([stats, users, activities]: any[]) => {
-        return {
-          stats: stats,
-          activities: activities.map((a: any) => ({
-            ...a,
-            timeLabel: this.formatTimeAgo(new Date(a.time)),
-          })),
-          systemStatus: this.getSystemStatus(),
-        };
-      }),
+      map(([stats, users, activities, dailyVisits, departmentDist, workload]: any[]) => ({
+        stats,
+        activities: activities.map((a: any) => ({
+          ...a,
+          timeLabel: this.formatTimeAgo(new Date(a.time)),
+        })),
+        dailyVisits,
+        departmentDist,
+        workload,
+      })),
     );
-  }
-
-  private getSystemStatus() {
-    const storageUsage = Math.round((JSON.stringify(localStorage).length / (5 * 1024 * 1024)) * 100);
-    return [
-      { name: 'Database Engine', status: 'Optimal', severity: 'success', icon: 'pi-database', value: '99.9% Uptime' },
-      { name: 'Cloud Sync', status: 'Synchronized', severity: 'success', icon: 'pi-cloud-upload', value: 'Last: 2m ago' },
-      { name: 'Security Shield', status: 'Protected', severity: 'success', icon: 'pi-shield', value: 'AES-256' },
-      { name: 'System Memory', status: '42% Load', severity: 'info', icon: 'pi-server', value: '1.2GB/4GB' },
-      {
-        name: 'Storage Unit',
-        status: `${storageUsage}% Used`,
-        severity: storageUsage > 80 ? 'danger' : (storageUsage > 50 ? 'warning' : 'success'),
-        icon: 'pi-hdd',
-        value: `${(JSON.stringify(localStorage).length / 1024).toFixed(1)} KB`
-      }
-    ];
   }
 
   private formatTimeAgo(date: Date): string {
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-
     if (diff < 60) return 'Just now';
     if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
     return date.toLocaleDateString();
-  }
-
-  public getSeverityClass(status: string): string {
-    if (status.includes('Healthy') || status.includes('Initialized') || status.includes('Active')) return 'success';
-    if (status.includes('80%') || status.includes('90%')) return 'warning';
-    return 'info';
   }
 }

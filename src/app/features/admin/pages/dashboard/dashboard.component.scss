@@ -1,4 +1,4 @@
-:h.admin-dashboard-wrapper {
+.admin-dashboard-wrapper {
   .glass-card {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
@@ -40,6 +40,21 @@
 
   .line-height-3 {
     line-height: 1.5;
+  }
+}
+
+/* Live pulse dot animation for System Status */
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.4);
   }
 }
 

@@ -17,15 +17,12 @@ import { BillingService } from '../../services/billing.service';
 import { BillingExportService } from '../../services/billing-export.service';
 import { PatientService } from '../../../patient/services/patient.service';
 import { Patient } from '../../../../core/models/patient.model';
-import { AppointmentService } from '../../services/appointment.service';
-import { AppointmentStatus } from '../../../../core/models/enums/appointment-status.enum';
-import { UserService } from '../../../admin/services/user.service';
-import { UserRole } from '../../../../core/models/enums/user-role.enum';
+import { OpdService } from '../../services/opd.service';
+import { TokenStatus } from '../../../../core/models/enums/token-status.enum';
 import { combineLatest, map } from 'rxjs';
 
 interface PatientOption extends Patient {
-    appointmentCode?: string;
-    hasAppointment?: boolean;
+    tokenNumber?: string;
 }
 
 @Component({
@@ -73,8 +70,7 @@ export class BillingComponent implements OnInit {
         private billingService: BillingService,
         private billingExportService: BillingExportService,
         private patientService: PatientService,
-        private appointmentService: AppointmentService,
-        private userService: UserService,
+        private opdService: OpdService,
         private messageService: MessageService
     ) {
         this.billForm = this.fb.group({
@@ -87,54 +83,31 @@ export class BillingComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Only show patients whose doctor consultation is COMPLETED today.
+        // Billing can only be done after the doctor has finished the consultation.
         combineLatest([
             this.patientService.patients$,
-            this.appointmentService.appointments$,
-            this.userService.users$
+            this.opdService.tokens$
         ]).pipe(
-            map(([patients, appointments, users]) => {
+            map(([patients, tokens]) => {
                 const today = new Date().toDateString();
-
-                // Get all registered patients
-                const patientOptions: PatientOption[] = patients.map(p => {
-                    const todayApt = appointments.find(a =>
-                        a.patientId === p.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    );
-                    return {
-                        ...p,
-                        appointmentCode: todayApt?.id,
-                        hasAppointment: !!todayApt
-                    };
-                });
-
-                // Add Portal Users (Role: PATIENT) who aren't registered yet
-                const portalUsers = users.filter(u =>
-                    u.role === UserRole.PATIENT &&
-                    !patientOptions.some(p => p.id === u.id)
-                ).map(u => ({
-                    id: u.id,
-                    fullName: u.fullName,
-                    phone: u.phone || 'Portal User',
-                    age: u.age,
-                    gender: u.gender as any,
-                    email: u.email,
-                    createdAt: u.createdAt,
-                    updatedAt: u.updatedAt,
-                    hasAppointment: !!appointments.find(a =>
-                        a.patientId === u.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    ),
-                    appointmentCode: appointments.find(a =>
-                        a.patientId === u.id &&
-                        new Date(a.appointmentDate).toDateString() === today &&
-                        (a.status === AppointmentStatus.BOOKED || (a.status as any) === 'SCHEDULED')
-                    )?.id
-                } as PatientOption));
-
-                return [...patientOptions, ...portalUsers];
+                const completedTokens = tokens.filter(t =>
+                    new Date(t.createdAt).toDateString() === today &&
+                    t.status === TokenStatus.COMPLETED
+                );
+                const seen = new Set<string>();
+                return completedTokens
+                    .filter(t => {
+                        if (seen.has(t.patientId)) return false;
+                        seen.add(t.patientId);
+                        return true;
+                    })
+                    .map(token => {
+                        const patient = patients.find(p => p.id === token.patientId);
+                        if (!patient) return null;
+                        return { ...patient, tokenNumber: token.tokenNumber } as PatientOption;
+                    })
+                    .filter((p): p is PatientOption => p !== null);
             })
         ).subscribe(all => {
             this.allPatients = all;

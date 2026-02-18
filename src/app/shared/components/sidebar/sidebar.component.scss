@@ -1,13 +1,14 @@
 .app-sidebar {
   width: var(--sidebar-width);
   height: 100vh;
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--surface-border);
+  background: var(--sidebar-gradient, linear-gradient(180deg, #0c1a2e 0%, #0f2744 40%, #0e3a5c 100%));
+  border-right: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   z-index: 1100;
   position: relative;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
 
   &.collapsed {
     width: var(--sidebar-collapsed-width);
@@ -28,9 +29,12 @@
   }
 }
 
+/* ── Header ─────────────────────────────────────────── */
 .sidebar-header {
   height: 80px;
-  border-bottom: 1px solid var(--surface-border);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(4px);
 
   .logo-container {
     cursor: pointer;
@@ -43,95 +47,136 @@
 
   .logo-text {
     letter-spacing: -0.5px;
+    color: #ffffff !important;
+  }
+
+  /* Override PrimeNG surface-border on header */
+  &.border-bottom-1 {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Logo icon container */
+  .w-2\.5rem {
+    background: linear-gradient(135deg, #0891b2, #06b6d4) !important;
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.5);
+  }
+
+  i.pi-plus-circle {
+    color: #ffffff !important;
+  }
+
+  /* Hospital name text */
+  span.logo-text {
+    color: #ffffff !important;
+  }
+
+  span.text-primary {
+    color: #67e8f9 !important;
   }
 }
 
+/* ── Menu area ───────────────────────────────────────── */
 .sidebar-menu {
-  padding-top: 1.5rem;
+  padding-top: 1rem;
 
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--surface-border);
+    background: rgba(8, 145, 178, 0.4);
     border-radius: 10px;
   }
 }
 
+/* ── Group labels — colour-coded per section ─────────── */
 .menu-group {
-  &:first-child {
-    .group-label {
-      margin-top: 0.5rem;
-    }
+  &:first-child .group-label {
+    margin-top: 0.5rem;
   }
 }
 
 .group-label {
   letter-spacing: 0.1em;
-  font-size: 0.65rem;
-  color: #94a3b8;
+  font-size: 0.6rem;
+  font-weight: 900;
   margin-top: 1.5rem;
+  padding: 0 1rem;
+  text-transform: uppercase;
 }
 
+/* Colour each group label differently */
+.menu-group:nth-child(1) .group-label {
+  color: #67e8f9;
+}
+
+/* Overview  — teal   */
+.menu-group:nth-child(2) .group-label {
+  color: #6ee7b7;
+}
+
+/* Clinical  — green  */
+.menu-group:nth-child(3) .group-label {
+  color: #fbbf24;
+}
+
+/* Operations— amber  */
+.menu-group:nth-child(4) .group-label {
+  color: #c4b5fd;
+}
+
+/* Admin     — purple */
+.menu-group:nth-child(5) .group-label {
+  color: #f9a8d4;
+}
+
+/* Patient   — pink   */
+
+/* ── Menu items ──────────────────────────────────────── */
 .menu-item {
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
-  margin: 0 8px;
+  margin: 2px 10px;
   height: 44px;
-  padding: 0 16px !important;
-  border-radius: 8px;
+  padding: 0 14px !important;
+  border-radius: 10px;
+  transition: all 0.2s ease;
 
   i {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     transition: transform 0.2s;
   }
 
   &:hover {
-    background-color: #f1f5f9;
-    color: #0f172a;
+    background: rgba(8, 145, 178, 0.18);
+    color: #ffffff;
 
     i {
-      transform: scale(1.1);
+      transform: scale(1.15);
+      color: #67e8f9;
     }
   }
 
   &.active {
-    background-color: #eff6ff;
-    color: var(--primary-color);
-    box-shadow: inset 0 0 0 1px rgba(var(--primary-color-rgb), 0.1);
+    background: linear-gradient(135deg, rgba(8, 145, 178, 0.35), rgba(6, 182, 212, 0.2));
+    color: #ffffff;
+    border: 1px solid rgba(8, 145, 178, 0.4);
+    box-shadow: 0 4px 16px rgba(8, 145, 178, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     .label {
-      color: #1e40af;
+      color: #67e8f9;
       font-weight: 800;
     }
 
     i {
-      color: var(--primary-color);
+      color: #67e8f9;
     }
   }
 }
 
-.sidebar-footer {
-  border-top-color: rgba(255, 255, 255, 0.05) !important;
-  background: transparent !important;
-
-  .menu-item {
-    &:hover {
-      background-color: #fef2f2;
-      color: #dc2626;
-    }
-  }
-}
-
-.mt-minus-1 {
-  margin-top: -2px;
-}
-
+/* ── Collapsed icon tooltip ──────────────────────────── */
 @media (max-width: 768px) {
-  .app-sidebar {
-    .label {
-      display: block;
-    }
+  .app-sidebar .label {
+    display: block;
   }
 }

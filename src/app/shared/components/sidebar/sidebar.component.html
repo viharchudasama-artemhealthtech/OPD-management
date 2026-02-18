@@ -1,16 +1,15 @@
 <aside class="app-sidebar shadow-2 transition-all duration-300" [class.collapsed]="isCollapsed">
   <!-- Branding Section -->
-  <div
-    class="sidebar-header flex align-items-center justify-content-center p-4 border-bottom-1 surface-border bg-white">
+  <div class="sidebar-header flex align-items-center justify-content-center p-4">
     <div class="logo-container flex align-items-center gap-3">
-      <div
-        class="w-2.5rem h-2.5rem bg-primary-50 border-round-lg flex align-items-center justify-content-center shadow-1">
-        <i class="pi pi-plus-circle text-primary text-xl"></i>
+      <div class="w-2rem h-2rem border-round-lg flex align-items-center justify-content-center"
+        style="background: linear-gradient(135deg, #0891b2, #06b6d4); box-shadow: 0 4px 12px rgba(8,145,178,0.5);">
+        <i class="pi pi-plus-circle text-white text-lg"></i>
       </div>
       @if (!isCollapsed) {
       <div class="flex flex-column">
-        <span class="logo-text font-black text-xl tracking-tighter text-900 leading-tight">
-          BMC <span class="text-primary">Hospital</span>
+        <span class="logo-text font-black text-xl tracking-tighter leading-tight" style="color:#ffffff;">
+          BMC <span style="color:#67e8f9;">Hospital</span>
         </span>
       </div>
       }
@@ -46,15 +45,5 @@
     </div>
   </div>
 
-  <!-- Sidebar Footer -->
-  <div class="sidebar-footer p-3 border-top-1 surface-border bg-white">
-    <div
-      class="menu-item p-3 border-round-xl transition-all p-ripple text-red-600 hover:bg-red-50 flex align-items-center"
-      pRipple (click)="logout()" [pTooltip]="isCollapsed ? 'Terminate Session' : ''" tooltipPosition="right">
-      <i class="pi pi-power-off text-xl font-bold"></i>
-      @if (!isCollapsed) {
-      <span class="label font-bold ml-3 text-sm">Terminate Session</span>
-      }
-    </div>
-  </div>
+
 </aside>

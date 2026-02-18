@@ -83,7 +83,7 @@ export class SidebarComponent implements OnInit, OnChanges {
       icon: 'pi pi-check-circle',
       route: '/receptionist/checkin',
       roles: [UserRole.RECEPTIONIST],
-      group: 'Operations'
+      group: 'Overview'
     },
     {
       label: 'Patient Management',
