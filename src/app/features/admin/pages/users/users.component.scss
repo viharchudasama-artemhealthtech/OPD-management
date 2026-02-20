@@ -202,44 +202,7 @@ h1 {
   }
 }
 
-:host ::ng-deep {
-  .professional-dialog {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
-    .p-dialog-header {
-      background: white;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid #f1f5f9;
-      color: #0f172a;
-
-      .p-dialog-title {
-        font-weight: 800;
-        font-size: 1.25rem;
-        letter-spacing: -0.025em;
-      }
-    }
-
-    .p-dialog-content {
-      padding: 2rem;
-      background: white;
-    }
-
-    .p-dropdown-panel {
-      border-radius: 12px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .professional-input {
-    .p-dropdown {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-    }
-  }
-}
 
 // Utility classes
 .flex {

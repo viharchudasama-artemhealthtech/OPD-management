@@ -1,102 +1,117 @@
 # OPD Management System
 
-A comprehensive Outpatient Department (OPD) management system built with **Angular 17** and **PrimeNG**. This application streamlines clinical workflows, from patient registration and appointment scheduling to doctor consultations and patient portal access.
+A robust, full-stack Outpatient Department (OPD) management system designed to streamline clinical workflows. The project consists of a modern **Angular 17** frontend and a **Spring Boot** microservices architecture.
 
-## 🚀 Features
+## 🏛️ System Architecture
 
-### 👤 Role-Based Access Control
-The system supports multiple user roles with specific access levels:
-- **Admin**: Full system access, including user management and system settings.
-- **Receptionist**: Patient registration, appointment scheduling, and OPD check-in.
-- **Doctor**: Appointment management and patient consultation tracking.
-- **Patient**: Dedicated portal for booking appointments and managing profiles.
+The system is built using a microservices pattern, where the frontend communicates with various backend services via REST and gRPC.
 
-### 📋 Key Functionalities
-- **Patient Management**: Complete registration workflow with validation and unique ID generation.
-- **Appointment Scheduling**: Interactive booking system for both receptionists and patients.
-- **OPD Check-in**: Real-time token generation and check-in processing for walk-ins and scheduled appointments.
-- **Dashboard & Analytics**: Visual representation of clinic activities using **Chart.js**.
-- **Reporting & Exports**: Export data to **Excel (XLSX)** and generate **PDF** slips or reports.
-- **Interactive UI**: Modern, responsive design using **PrimeNG** components and **PrimeFlex** layout system.
+```mermaid
+graph TD
+    Client[Angular Frontend] <--> API[REST gateway/API]
+    API <--> PatientService[Patient Microservice]
+    API <--> BillingService[Billing Microservice]
+    PatientService <--> PS_DB[(PostgreSQL)]
+    PatientService -- gRPC --> BillingService
+```
+
+---
+
+## 🚀 Key Features
+
+### 👤 Role-Based Clinical Workflows
+- **Admin**: System configuration, user management, and analytics.
+- **Receptionist**: Patient onboarding, appointment scheduling, and token generation.
+- **Doctor**: Clinical consultation, history tracking, and digital prescriptions.
+- **Patient**: Self-service portal for appointments and medical records.
+
+### 📋 Core Functionalities
+- **Comprehensive Patient Management**: Digital registration with QR code identification.
+- **Smart Scheduling**: Interactive calendar for appointment and slot management.
+- **Real-time OPD Queuing**: Token-based check-in system for optimized patient flow.
+- **Microservices Orchestration**: Scalable services with inter-service gRPC communication.
+- **Rich Reporting**: Exportable medical reports (PDF) and analytical data (Excel).
+
+---
 
 ## 🛠️ Technology Stack
 
-- **Framework**: [Angular 17](https://angular.io/)
-- **UI Components**: [PrimeNG](https://primeng.org/)
-- **Icons**: [PrimeIcons](https://primeng.org/icons)
-- **Styling**: [PrimeFlex](https://primeflex.org/) & SCSS
-- **Charts**: [Chart.js](https://www.chartjs.org/)
-- **State Management**: [RxJS](https://rxjs.dev/) (Reactive Streams)
-- **Utilities**:
-  - `jspdf`: For PDF generation.
-  - `xlsx`: For Excel data exports.
-  - `qrcode-generator`: For patient/token QR codes.
+### Frontend (OPD-management)
+- **Framework**: [Angular 17+](https://angular.io/)
+- **UI Library**: [PrimeNG](https://primeng.org/) & [PrimeFlex](https://primeflex.org/)
+- **Visuals**: [Chart.js](https://www.chartjs.org/) & [PrimeIcons](https://primeng.org/icons)
+- **Utilities**: `jspdf`, `xlsx`, `qrcode-generator`
+
+### Backend (Patient-management)
+- **Core**: [Java 21](https://www.oracle.com/java/technologies/downloads/), [Spring Boot 3.4.x](https://spring.io/projects/spring-boot)
+- **Communication**: [gRPC](https://grpc.io/) (Inter-service), REST (Frontend-to-Backend)
+- **Persistence**: [PostgreSQL](https://www.postgresql.org/), Spring Data JPA
+- **API Documentation**: [SpringDoc OpenAPI (Swagger)](https://springdoc.org/)
+- **Utilities**: Project Lombok, Maven
+
+---
 
 ## 📂 Project Structure
 
 ```text
-src/app/
-├── core/               # Core singleton services, guards, and models
-│   ├── guards/         # Auth and Role guards
-│   ├── models/         # TypeScript interfaces and enums
-│   ├── repositories/   # Data access layer (Fake Backend/Storage)
-│   └── services/       # Business logic and state management
-├── features/           # Feature-specific modules and components
-│   ├── admin/          # Admin-only pages
-│   ├── auth/           # Login and authentication flow
-│   ├── dashboard/      # Main activity dashboard
-│   ├── doctor/         # Doctor-specific workflows
-│   ├── patient/        # Patient management (Receptionist view)
-│   ├── patient-portal/ # Self-service portal for patients
-│   └── receptionist/   # Receptionist workflows (scheduling, check-in)
-├── shared/             # Reusable components, directives, and pipes
-│   ├── components/     # Layout, Sidebar, Header, etc.
-│   ├── directives/     # Custom directives (e.g., AutoNext)
-│   └── pipes/          # Custom formatting pipes (e.g., Age, Phone)
-└── styles.scss         # Global styles and PrimeNG overrides
+.
+├── OPD-management/            # Angular Frontend
+│   ├── src/app/core/          # Services, Guards, Models
+│   ├── src/app/features/      # Domain-specific modules (Admin, Doctor, etc.)
+│   └── src/app/shared/        # Reusable UI components
+│
+└── Patient-management/        # Spring Boot Microservices
+    ├── patient-service/       # Core patient & consultation management
+    ├── billing-service/       # gRPC-based billing engine
+    └── grpc-requests/         # Shared gRPC service definitions
 ```
+
+---
 
 ## ⚙️ Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [Angular CLI](https://angular.io/cli) (`npm install -g @angular/cli`)
+- **Node.js**: v18+
+- **Java**: 21+
+- **Maven**: 3.9+
+- **PostgreSQL**: 15+ (Running on port 5432)
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone [repository-url]
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd OPD-management
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Installation & Setup
 
-### Running the Application
-To start a local development server:
+#### 1. Database Configuration
+Create a PostgreSQL database named `patientdb`:
+```sql
+CREATE DATABASE patientdb;
+```
+Ensure your database credentials match `Patient-management/patient-service/src/main/resources/application.properties`.
+
+#### 2. Start Backend Services
+Navigate to each service directory and run:
 ```bash
+# In patient-service and billing-service directories
+mvn clean install
+mvn spring-boot:run
+```
+- **Patient Service**: Running on http://localhost:8080 (Swagger: `/swagger-ui/index.html`)
+- **Billing Service**: Running on http://localhost:4001 (gRPC port: 9001)
+
+#### 3. Start Frontend App
+```bash
+cd OPD-management
+npm install
 npm start
 ```
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Navigate to `http://localhost:4200/`.
 
-### Building for Production
-To build the project for production:
-```bash
-npm run build
-```
-The build artifacts will be stored in the `dist/` directory.
+---
 
-## 🧪 Testing
-Run unit tests via [Karma](https://karma-runner.github.io):
-```bash
-npm test
-```
+## 🧪 Development & Quality
 
-## 👨‍💻 Development Guidelines
-- **Coding Standards**: All files should adhere to the project's Prettier and ESLint configurations.
-- **Formatting**: Run `npm run format` before committing changes.
-- **Linting**: Run `npm run lint` to check for code quality issues.
+- **Linting & Formatting**: `npm run lint` and `npm run format` for frontend.
+- **Unit Testing**: `npm test` (Angular) and `mvn test` (Spring Boot).
+- **API Specs**: Access Swagger UI on the Patient Service for interactive API documentation.
+
+---
+
+## 👨‍💻 Contributing
+Please ensure all commits adhere to the project's Prettier and ESLint configurations. Run full verification before pushing to GitHub.

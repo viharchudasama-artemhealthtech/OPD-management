@@ -176,28 +176,45 @@
     </div>
     }
 
-    <p-dialog [(visible)]="displayVitalsDialog" header="Patient Vitals" [modal]="true" [style]="{width: '400px'}">
-        <form [formGroup]="vitalsForm" (ngSubmit)="saveVitals()" class="p-3">
+    <p-dialog [(visible)]="displayVitalsDialog" header="Patient Vitals" [modal]="true" [style]="{width: '450px'}"
+        styleClass="professional-dialog" [draggable]="false" [resizable]="false">
+        <form [formGroup]="vitalsForm" (ngSubmit)="saveVitals()" class="mt-2">
             <div class="grid">
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Temp (°F)</label><p-inputNumber
-                        formControlName="temperature" mode="decimal" [minFractionDigits]="1"
-                        styleClass="w-full"></p-inputNumber></div>
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Pulse (BPM)</label><p-inputNumber
-                        formControlName="pulse" styleClass="w-full"></p-inputNumber></div>
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Sys BP</label><p-inputNumber
-                        formControlName="systolic" styleClass="w-full"></p-inputNumber></div>
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Dia BP</label><p-inputNumber
-                        formControlName="diastolic" styleClass="w-full"></p-inputNumber></div>
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">SPO2 (%)</label><p-inputNumber
-                        formControlName="spo2" styleClass="w-full"></p-inputNumber></div>
-                <div class="col-6 mb-3"><label class="block text-xs font-bold mb-2">Weight (KG)</label><p-inputNumber
-                        formControlName="weight" mode="decimal" [minFractionDigits]="1"
-                        styleClass="w-full"></p-inputNumber></div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">Temp (°F)</label>
+                    <p-inputNumber formControlName="temperature" mode="decimal" [minFractionDigits]="1"
+                        styleClass="w-full" placeholder="98.6"></p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">Pulse (BPM)</label>
+                    <p-inputNumber formControlName="pulse" styleClass="w-full" placeholder="72"></p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">Sys BP</label>
+                    <p-inputNumber formControlName="systolic" styleClass="w-full" placeholder="120"></p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">Dia BP</label>
+                    <p-inputNumber formControlName="diastolic" styleClass="w-full" placeholder="80"></p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">SPO2 (%)</label>
+                    <p-inputNumber formControlName="spo2" styleClass="w-full" placeholder="98"></p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6 mb-3">
+                    <label class="block text-xs font-bold text-500 uppercase mb-2">Weight (KG)</label>
+                    <p-inputNumber formControlName="weight" mode="decimal" [minFractionDigits]="1" styleClass="w-full"
+                        placeholder="70.0"></p-inputNumber>
+                </div>
             </div>
-            <div class="flex justify-content-end gap-2 mt-4">
-                <p-button label="Cancel" (onClick)="displayVitalsDialog = false" styleClass="p-button-text"></p-button>
-                <p-button label="Save" icon="pi pi-check" type="submit"></p-button>
-            </div>
+
+            <ng-template pTemplate="footer">
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="Cancel" (onClick)="displayVitalsDialog = false"
+                        styleClass="p-button-text p-button-secondary font-bold"></p-button>
+                    <p-button label="Save" icon="pi pi-check" type="submit" styleClass="px-4 shadow-2"></p-button>
+                </div>
+            </ng-template>
         </form>
     </p-dialog>
 </div>
