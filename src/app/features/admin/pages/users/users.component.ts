@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
+import { TableModule, Table } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -42,10 +42,13 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent {
+  @ViewChild('dt') dt!: Table;
+
   public displayDialog = false;
   public selectedUser: AppUser | null = null;
   public userForm: FormGroup;
   public searchValue = '';
+  public selectedRole: string | null = null;
   public readonly users$: Observable<AppUser[]>;
 
   public readonly statusOptions = [
@@ -150,5 +153,14 @@ export class UsersComponent {
 
   public getInitials(name: string): string {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
+  }
+
+  public filterByRole(value: string | null): void {
+    this.dt.filter(value ?? '', 'role', 'equals');
+  }
+
+  public clearRoleFilter(): void {
+    this.selectedRole = null;
+    this.dt.filter('', 'role', 'equals');
   }
 }

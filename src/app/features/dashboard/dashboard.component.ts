@@ -8,12 +8,19 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { AuthService } from '../auth/services/auth.service';
 import { AnalyticsService, ChartData, StatCard } from '../../core/services/analytics.service';
-import { PatientService } from '../patient/services/patient.service';
 import { AppointmentService } from '../receptionist/services/appointment.service';
 import { User } from '../../core/models/user.model';
 import { Appointment } from '../../core/models/appointment.model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+interface ChartOptions {
+  maintainAspectRatio?: boolean;
+  aspectRatio?: number;
+  cutout?: string;
+  plugins?: Record<string, unknown>;
+  scales?: Record<string, unknown>;
+}
 
 @Component({
   // Consultant Dashboard View
@@ -32,9 +39,9 @@ export class DashboardComponent implements OnInit {
   public readonly insightStats$: Observable<StatCard[]>;
   public readonly recentAppointments$: Observable<Appointment[]>;
 
-  public chartOptions: any;
-  public demographicOptions: any;
-  public workloadOptions: any;
+  public chartOptions: ChartOptions | null = null;
+  public demographicOptions: ChartOptions | null = null;
+  public workloadOptions: ChartOptions | null = null;
 
   constructor(
     private readonly authService: AuthService,

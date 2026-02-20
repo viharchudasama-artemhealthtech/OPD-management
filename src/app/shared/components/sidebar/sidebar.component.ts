@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { UserRole } from '../../../core/models/user.model';
@@ -26,7 +26,10 @@ interface MenuItem {
 export class SidebarComponent implements OnInit, OnChanges {
 
   @Input() public isCollapsed = false;
+  @Input() public isMobile = false;
+  @Input() public isMobileOpen = false;
   @Input() public userRole: string | null = null;
+  @Output() public closeSidebar = new EventEmitter<void>();
 
   private readonly menuItems: MenuItem[] = [
     {
@@ -79,6 +82,13 @@ export class SidebarComponent implements OnInit, OnChanges {
       group: 'Operations'
     },
     {
+      label: 'New Patient',
+      icon: 'pi pi-user-plus',
+      route: '/patient/register',
+      roles: [UserRole.RECEPTIONIST],
+      group: 'Overview'
+    },
+    {
       label: 'OPD Check-in',
       icon: 'pi pi-check-circle',
       route: '/receptionist/checkin',
@@ -122,7 +132,7 @@ export class SidebarComponent implements OnInit, OnChanges {
     },
     {
       label: 'E-Prescriptions',
-      icon: 'pi pi-file-medical',
+      icon: 'pi pi-file-edit',
       route: '/receptionist/prescriptions',
       roles: [UserRole.RECEPTIONIST, UserRole.DOCTOR],
       group: 'Clinical'

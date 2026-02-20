@@ -42,13 +42,17 @@
             placeholder="Search by name, ID, or email..." class="w-full professional-input h-3rem" />
         </span>
         <div class="flex align-items-center gap-2">
-          <span class="text-sm text-500 font-bold mr-2">Sort By:</span>
-          <p-dropdown [options]="roles" placeholder="Role Filter" styleClass="w-12rem professional-input"></p-dropdown>
+          <span class="text-sm text-500 font-bold mr-2">Filter By Role:</span>
+          <p-dropdown [options]="roles" [(ngModel)]="selectedRole" placeholder="All Roles"
+            styleClass="w-12rem professional-input" [showClear]="true" (onChange)="filterByRole($event.value)"
+            (onClear)="clearRoleFilter()">
+          </p-dropdown>
         </div>
       </div>
 
       <p-table #dt [value]="(users$ | async) || []" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
-        responsiveLayout="stack" breakpoint="960px" styleClass="p-datatable-professional">
+        responsiveLayout="stack" breakpoint="960px" styleClass="p-datatable-professional"
+        [globalFilterFields]="['fullName', 'username', 'email', 'role']">
         <ng-template pTemplate="header">
           <tr>
             <th class="bg-white border-bottom-2 text-700 uppercase text-xs font-black tracking-widest pl-4">Account</th>

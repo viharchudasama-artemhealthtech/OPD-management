@@ -9,9 +9,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../../features/auth/services/auth.service';
 import { NotificationService, Notification } from '../../../core/services/notification.service';
-import { SystemSettingsService, SystemSettings } from '../../../core/services/system-settings.service';
+import { SystemSettingsService } from '../../../core/services/system-settings.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
 
 @Component({
@@ -28,7 +27,6 @@ export class HeaderComponent {
   public readonly currentUser$: Observable<User | null>;
   public readonly notifications$: Observable<Notification[]>;
   public readonly unreadCount$: Observable<number>;
-  public readonly systemName$: Observable<string>;
 
   public readonly userMenuItems = [
     { label: 'Profile', icon: 'pi pi-user', command: () => this.router.navigate(['/profile']) },
@@ -45,7 +43,6 @@ export class HeaderComponent {
     this.currentUser$ = this.authService.currentUser$;
     this.notifications$ = this.notificationService.notifications$;
     this.unreadCount$ = this.notificationService.unreadCount$;
-    this.systemName$ = this.settingsService.settings$.pipe(map((s: SystemSettings) => s.general.systemName));
   }
 
   public onToggleSidebar(): void {

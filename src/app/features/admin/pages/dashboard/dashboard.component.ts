@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
@@ -12,6 +13,7 @@ import { AnalyticsService, StatCard, ChartData } from '../../../../core/services
 import { UserService } from '../../services/user.service';
 import { ActivityService } from '../../../../core/services/activity.service';
 
+
 interface DashboardData {
   stats: StatCard[];
   activities: any[];
@@ -23,7 +25,7 @@ interface DashboardData {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, CardModule, ChartModule, TableModule, ButtonModule, MenuModule, TagModule],
+  imports: [CommonModule, RouterLink, CardModule, ChartModule, TableModule, ButtonModule, MenuModule, TagModule,],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,8 +33,8 @@ interface DashboardData {
 export class DashboardComponent {
   public readonly dashboardData$: Observable<DashboardData>;
   public today: Date = new Date();
+  private router = inject(Router);
 
-  /* ── Shared chart options ───────────────────────────── */
   public lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -126,5 +128,9 @@ export class DashboardComponent {
     if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
     return date.toLocaleDateString();
+  }
+
+  navigateToUser() {
+    this.router.navigate(['/admin/users']);
   }
 }

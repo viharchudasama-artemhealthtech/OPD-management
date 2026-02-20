@@ -174,9 +174,45 @@
   }
 }
 
-/* ── Collapsed icon tooltip ──────────────────────────── */
-@media (max-width: 768px) {
-  .app-sidebar .label {
-    display: block;
+/* ── Mobile Drawer ────────────────────────────────────── */
+@media (max-width: 767px) {
+  .app-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px !important;
+    transform: translateX(-100%);
+    z-index: 1200;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Mobile Close Button */
+.mobile-close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  i {
+    font-size: 1rem;
   }
 }

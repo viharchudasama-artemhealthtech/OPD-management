@@ -1,6 +1,13 @@
 <div class="app-layout">
+  <!-- Mobile overlay backdrop -->
+  @if (isMobile && isMobileOpen) {
+  <div class="mobile-overlay" (click)="closeMobileSidebar()"></div>
+  }
+
   <!-- Sidebar -->
-  <app-sidebar [isCollapsed]="isSidebarCollapsed" [userRole]="userRole"></app-sidebar>
+  <app-sidebar [isCollapsed]="isSidebarCollapsed" [isMobileOpen]="isMobileOpen" [isMobile]="isMobile"
+    [userRole]="userRole" (closeSidebar)="closeMobileSidebar()">
+  </app-sidebar>
 
   <div class="main-container">
     <!-- Header -->

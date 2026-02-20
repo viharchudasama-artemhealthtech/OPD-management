@@ -12,6 +12,7 @@
   flex-direction: column;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0; // prevent flex-child overflow
 }
 
 .main-content {
@@ -44,7 +45,27 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Overlay backdrop for mobile drawer */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1100;
+  backdrop-filter: blur(2px);
+  animation: fadeOverlay 0.2s ease-out;
+}
+
+@keyframes fadeOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
   .main-content {
     padding: 1rem;
   }

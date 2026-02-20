@@ -520,15 +520,45 @@ a {
     margin-bottom: 1rem;
   }
 
+  /* Make all PrimeNG data tables scroll horizontally on mobile */
   .p-datatable {
     font-size: 0.875rem;
+
+    .p-datatable-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
   }
 
   .p-dialog {
     width: 95vw !important;
     max-width: 95vw !important;
   }
+
+  /* Stat cards — reduce padding on mobile */
+  .stat-card {
+    padding: 1rem;
+
+    &::before {
+      display: none; // hide decorative circle on mobile
+    }
+  }
+
+  /* Scale down large headings */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Full-width buttons in action bars */
+  .mobile-full-width {
+    width: 100% !important;
+  }
 }
+
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .main-content {

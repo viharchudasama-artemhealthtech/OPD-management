@@ -1,12 +1,15 @@
-<aside class="app-sidebar shadow-2 transition-all duration-300" [class.collapsed]="isCollapsed">
+<aside class="app-sidebar shadow-2 transition-all duration-300" [class.collapsed]="isCollapsed"
+  [class.mobile-open]="isMobile && isMobileOpen">
+
   <!-- Branding Section -->
-  <div class="sidebar-header flex align-items-center justify-content-center p-4">
+  <div class="sidebar-header flex align-items-center p-4" [class.justify-content-center]="!isMobile"
+    [class.justify-content-between]="isMobile">
     <div class="logo-container flex align-items-center gap-3">
       <div class="w-2rem h-2rem border-round-lg flex align-items-center justify-content-center"
         style="background: linear-gradient(135deg, #0891b2, #06b6d4); box-shadow: 0 4px 12px rgba(8,145,178,0.5);">
         <i class="pi pi-plus-circle text-white text-lg"></i>
       </div>
-      @if (!isCollapsed) {
+      @if (!isCollapsed || isMobile) {
       <div class="flex flex-column">
         <span class="logo-text font-black text-xl tracking-tighter leading-tight" style="color:#ffffff;">
           BMC <span style="color:#67e8f9;">Hospital</span>
@@ -14,6 +17,12 @@
       </div>
       }
     </div>
+    <!-- Mobile close button -->
+    @if (isMobile) {
+    <button class="mobile-close-btn" (click)="closeSidebar.emit()">
+      <i class="pi pi-times"></i>
+    </button>
+    }
   </div>
 
   <!-- Navigation Menu -->
@@ -22,7 +31,7 @@
       @for (group of groups; track group) {
       @if (getItemsByGroup(group).length > 0) {
       <div class="menu-group">
-        @if (!isCollapsed) {
+        @if (!isCollapsed || isMobile) {
         <div class="group-label text-xs font-black text-400 uppercase tracking-widest px-3 mb-2">
           {{ group }}
         </div>
@@ -31,9 +40,10 @@
           @for (item of getItemsByGroup(group); track item.route) {
           <div [routerLink]="item.route" routerLinkActive="active"
             class="menu-item p-3 border-round-xl transition-all p-ripple flex align-items-center" pRipple
-            [pTooltip]="isCollapsed ? item.label : ''" tooltipPosition="right">
+            [pTooltip]="isCollapsed && !isMobile ? item.label : ''" tooltipPosition="right"
+            (click)="isMobile && closeSidebar.emit()">
             <i [class]="item.icon + ' text-xl'"></i>
-            @if (!isCollapsed) {
+            @if (!isCollapsed || isMobile) {
             <span class="label font-bold ml-3 text-sm">{{ item.label }}</span>
             }
           </div>
