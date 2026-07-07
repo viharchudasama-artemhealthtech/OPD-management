@@ -1,4 +1,4 @@
-# OPD Management System
+# OPD Management
 
 A full-featured **Outpatient Department (OPD)** management web application built with **Angular 17**. It provides dedicated, role-locked portals for Admins, Receptionists, Doctors, and Patients — covering the complete clinical workflow from registration to consultation and billing.
 
